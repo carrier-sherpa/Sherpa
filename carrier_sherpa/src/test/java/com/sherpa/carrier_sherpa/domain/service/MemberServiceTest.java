@@ -27,7 +27,7 @@ class MemberServiceTest {
                 .password("1111")
                 .build();
 
-        return Member.createMember(memberFormDto, passwordEncoder);
+        return memberService.createMember(memberFormDto, passwordEncoder);
     }
 
     @Test

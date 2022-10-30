@@ -38,13 +38,5 @@ public class Member {
     }
 
     //여기 왜 static이지?
-    public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
-//        Member member = new Member();
 
-        return Member.builder()
-                .email(memberFormDto.getEmail())
-                .password(passwordEncoder.encode(memberFormDto.getPassword()))
-                .role(MemberRole.USER)
-                .build();
-    }
 }

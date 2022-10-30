@@ -28,14 +28,24 @@ public class MemberController {
         return "member/memberForm";
     }
 
-    @PostMapping(value = "new")
+    @GetMapping(value = "/store")
+    public String store() {
+        memberService.saveMember(
+                Member.builder()
+                        .email("test@naver.com")
+                        .password("1111")
+                        .build());
+        return "";
+    }
+
+    @PostMapping(value = "/new")
     public String memberForm(@Valid MemberFormDto memberFormDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "member/memberForm";
         }
 
         try {
-            Member member = Member.createMember(memberFormDto, passwordEncoder);
+            Member member = memberService.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
         } catch (IllegalStateException e) {
             //TODO: 여기에 에러 났다는 걸 알려주는 구문
@@ -44,4 +54,5 @@ public class MemberController {
 
         return "redirect:/";
     }
+
 }
