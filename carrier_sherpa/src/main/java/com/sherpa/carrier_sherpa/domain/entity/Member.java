@@ -17,13 +17,14 @@ import javax.persistence.*;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
-    @Column(unique = true)
+    @Column(name = "email",unique = true)
     private String email;
 
+    @Column(name ="password")
     private String password;
 
     @Enumerated(EnumType.STRING)

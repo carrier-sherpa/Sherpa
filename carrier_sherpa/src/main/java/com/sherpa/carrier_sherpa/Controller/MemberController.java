@@ -1,4 +1,4 @@
-package com.sherpa.carrier_sherpa.domain.controller;
+package com.sherpa.carrier_sherpa.Controller;
 
 import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.service.MemberService;
