@@ -39,7 +39,7 @@ public class LuggageController {
             @RequestBody LuggageReqDto luggageReqDto){
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-        return luggageService.create(memberResDto.getId(),luggageReqDto);
+        return null;
     }
 
     @PatchMapping("/{id}")

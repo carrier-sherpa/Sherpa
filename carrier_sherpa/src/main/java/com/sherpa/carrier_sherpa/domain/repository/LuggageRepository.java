@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface LuggageRepository extends JpaRepository<Luggage,String> {
     List<Luggage> findByMember_Id(String email);
+
+    List<Luggage> findByOrderId(String OrderId);
     Luggage save(Luggage luggage);
 }
-

@@ -15,13 +15,6 @@ import javax.persistence.*;
 @Table(name = "member")
 @Entity
 public class Member extends BaseEntity{
-
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "member_id")
-//    private Long id;
-
     @Column(name = "email",unique = true)
     private String email;
 

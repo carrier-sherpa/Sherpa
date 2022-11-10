@@ -1,5 +1,7 @@
 package com.sherpa.carrier_sherpa.domain.entity;
 
+import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
+import com.sherpa.carrier_sherpa.domain.service.LuggageService;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,42 +15,91 @@ import javax.persistence.*;
 @Entity
 public class Order  extends BaseEntity{
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "order_id")
-//    private Long id;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "id", name = "traveler_id")
+    private Member traveler;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "id", name = "sender_id")
-    private Member sender;
+    @JoinColumn(referencedColumnName = "id", name = "deliever_id")
+    private Member deliever;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "id", name = "courier_id")
-    private Member courier;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "luggage_id")
-    private Luggage luggage;
-
+    @Column(nullable = false)
     private String start;
 
-    private String goal;
+    @Column(nullable = false)
+    private String destination;
+
+    @Column(nullable = false)
+    private String start_time;
+
+    @Column(nullable = false)
+    private String end_time;
+
+
+    private String luggage_image_url;
+
+    @Enumerated(EnumType.STRING)
+    private LuggageStatus status;
+
 
     @Builder
-    public Order(Member sender, Member courier, Luggage luggage, String start, String goal) {
-        this.sender = sender;
-        this.courier = courier;
-        this.luggage = luggage;
+    public Order(
+            Member traveler,
+            Member deliever,
+            String start,
+            String destination,
+            String start_time,
+            String end_time,
+            String luggage_image_url,
+            LuggageStatus status) {
+        this.traveler = traveler;
+        this.deliever = deliever;
         this.start = start;
-        this.goal = goal;
+        this.destination = destination;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.luggage_image_url = luggage_image_url;
+        this.status = status;
     }
 
-    public Order(String id, Member sender, Member courier, Luggage luggage, String start, String goal) {
+    public Order(
+            String id,
+            Member traveler,
+            Member deliever,
+            String start,
+            String destination,
+            String start_time,
+            String end_time,
+            String luggage_image_url,
+            LuggageStatus status) {
         super(id);
-        this.sender = sender;
-        this.courier = courier;
-        this.luggage = luggage;
+        this.traveler = traveler;
+        this.deliever = deliever;
         this.start = start;
-        this.goal = goal;
+        this.destination = destination;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.luggage_image_url = luggage_image_url;
+        this.status = status;
+    }
+
+    public void update(
+            String start,
+            String destination,
+            String start_time,
+            String end_time,
+            String luggage_image_url) {
+        this.start = start;
+        this.destination = destination;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.luggage_image_url = luggage_image_url;
+    }
+
+    public void accept(
+            Member deliever
+    ){
+        this.deliever = deliever;
+        this.status = LuggageStatus.ACCEPT;
     }
 }

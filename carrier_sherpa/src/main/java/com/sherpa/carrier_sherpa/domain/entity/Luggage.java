@@ -3,13 +3,11 @@ package com.sherpa.carrier_sherpa.domain.entity;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageType;
 import com.sherpa.carrier_sherpa.domain.enums.MemberRole;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
@@ -29,88 +27,49 @@ public class Luggage  extends BaseEntity{
     private Member member;
 //  문맥상 owner라는 value 네이밍이 맞지만 Error:link falilure 발생. member로 바꿈
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "id",name = "order_id")
+    private Order order;
     @Column(nullable = false)
-    private String start;
-
-    @Column(nullable = false)
-    private String destination;
-
-    @Column(nullable = false)
-    private String start_time;
-
-    @Column(nullable = false)
-    private String end_time;
-    private String luggage_image_url;
+    private int num;
 
     @Enumerated(EnumType.STRING)
     private LuggageType size;
 
-    @Enumerated(EnumType.STRING)
-    private LuggageStatus status;
 
     // 왜 DB에는 luggageType이라 하며 오류나고 luggage_type이라 저장해야 되는건지...?
 
+    @Builder
     public Luggage(
             Member member,
-            String start,
-            String destination,
-            String start_time,
-            String end_time,
-            String luggage_image_url,
+            Order order,
             LuggageType size,
-            LuggageStatus status
+            int num
     ) {
-
+        this.order = order;
         this.member = member;
-        this.start = start;
-        this.destination = destination;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.luggage_image_url = luggage_image_url;
         this.size = size;
-        this.status = status;
+        this.num = num;
     }
 
     public Luggage(
             String id,
             Member member,
-            String start,
-            String destination,
-            String start_time,
-            String end_time,
-            String luggage_image_url,
             LuggageType size,
-            LuggageStatus status
+            int num
     ) {
         super(id);
         this.member = member;
-        this.start = start;
-        this.destination = destination;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.luggage_image_url = luggage_image_url;
         this.size = size;
-        this.status = status;
+        this.num = num;
     }
 
     public void update(
-            Member member,
-            String start,
-            String destination,
-            String start_time,
-            String end_time,
-            String luggage_image_url,
             LuggageType size,
-            LuggageStatus status
+            int num
     ){
-        this.member = member;
-        this.start = start;
-        this.destination = destination;
-        this.start_time = start_time;
-        this.end_time = end_time;
-        this.luggage_image_url = luggage_image_url;
         this.size = size;
-        this.status = status;
+        this.num = num;
     }
 
 }

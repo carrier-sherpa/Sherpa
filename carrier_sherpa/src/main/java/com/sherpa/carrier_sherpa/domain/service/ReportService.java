@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.Null;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -35,13 +37,14 @@ public class ReportService {
 
     public Report createReport(ReportFormDto reportFormDto, OrderFormDto orderFormDto) {
 
-        return Report.builder()
-                .order(orderRepository.findById(orderFormDto.getOrderId())
-                        .orElseThrow(() -> new IllegalStateException("해당하는 order가 업습니다")))
-//                .sender(memberService.createMember(reportFormDto.getSenderFormDto()))
-//                .courier(memberService.createMember(reportFormDto.getCourierFormDto()))
-                .reportType(reportFormDto.getReportType())
-                .build();
+//        return Report.builder()
+//                .order(orderRepository.findById(orderFormDto.getOrderId())
+//                        .orElseThrow(() -> new IllegalStateException("해당하는 order가 업습니다")))
+////                .sender(memberService.createMember(reportFormDto.getSenderFormDto()))
+////                .courier(memberService.createMember(reportFormDto.getCourierFormDto()))
+//                .reportType(reportFormDto.getReportType())
+//                .build();
+        return null;
     }
 
     public Report findReport(Long reportId) {
