@@ -1,20 +1,16 @@
 package com.sherpa.carrier_sherpa.Controller;
 
-import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.service.MemberService;
-import com.sherpa.carrier_sherpa.dto.MemberCreateReqDto;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
-import com.sherpa.carrier_sherpa.dto.MemberResDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberCreateReqDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RequestMapping("/members")

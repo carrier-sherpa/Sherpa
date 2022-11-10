@@ -7,7 +7,6 @@ import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageType;
 import com.sherpa.carrier_sherpa.domain.repository.LuggageRepository;
 import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
-import com.sherpa.carrier_sherpa.dto.LuggageListVO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

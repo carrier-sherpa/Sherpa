@@ -1,4 +1,4 @@
-package com.sherpa.carrier_sherpa.dto;
+package com.sherpa.carrier_sherpa.dto.Orders;
 
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;

@@ -1,13 +1,10 @@
 package com.sherpa.carrier_sherpa.Controller;
 
 import com.sherpa.carrier_sherpa.domain.entity.Luggage;
-import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.service.LuggageService;
-import com.sherpa.carrier_sherpa.dto.LuggageReqDto;
-import com.sherpa.carrier_sherpa.dto.LuggageResDto;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
-import com.sherpa.carrier_sherpa.dto.MemberResDto;
-import org.hibernate.validator.constraints.pl.REGON;
+import com.sherpa.carrier_sherpa.dto.Luggage.LuggageReqDto;
+import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

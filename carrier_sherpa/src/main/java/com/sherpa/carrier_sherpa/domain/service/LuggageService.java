@@ -9,8 +9,8 @@ import com.sherpa.carrier_sherpa.domain.exception.ErrorCode;
 import com.sherpa.carrier_sherpa.domain.repository.LuggageRepository;
 import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
 import com.sherpa.carrier_sherpa.domain.repository.OrderRepository;
-import com.sherpa.carrier_sherpa.dto.LuggageReqDto;
-import com.sherpa.carrier_sherpa.dto.LuggageResDto;
+import com.sherpa.carrier_sherpa.dto.Luggage.LuggageReqDto;
+import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

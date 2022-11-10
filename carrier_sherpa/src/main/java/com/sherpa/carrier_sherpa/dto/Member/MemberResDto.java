@@ -1,4 +1,4 @@
-package com.sherpa.carrier_sherpa.dto;
+package com.sherpa.carrier_sherpa.dto.Member;
 
 import com.sherpa.carrier_sherpa.domain.entity.Member;
 import lombok.Getter;

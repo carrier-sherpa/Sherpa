@@ -1,23 +1,21 @@
 package com.sherpa.carrier_sherpa.domain.service;
 
-import com.sherpa.carrier_sherpa.domain.entity.Luggage;
 import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
-import com.sherpa.carrier_sherpa.domain.enums.LuggageType;
 import com.sherpa.carrier_sherpa.domain.exception.BaseException;
 import com.sherpa.carrier_sherpa.domain.exception.ErrorCode;
-import com.sherpa.carrier_sherpa.domain.repository.LuggageRepository;
 import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
 import com.sherpa.carrier_sherpa.domain.repository.OrderRepository;
-import com.sherpa.carrier_sherpa.dto.*;
+import com.sherpa.carrier_sherpa.dto.Luggage.LuggageReqDto;
+import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
+import com.sherpa.carrier_sherpa.dto.Orders.OrderReqDto;
+import com.sherpa.carrier_sherpa.dto.Orders.OrderResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -52,14 +50,19 @@ public class OrderService {
         return luggages;
     }
     public OrderResDto create(String travelerId, OrderReqDto orderReqDto) {
-        Member loginMember = memberRepository.findById(travelerId).get();
+        Member loginMember = memberRepository.findById(travelerId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "해당하는 유저가 존재하지 않습니다."
+                )
+        );
         Order order = new Order(
                 loginMember,
                 null,
-                orderReqDto.getStart(),
-                orderReqDto.getDestination(),
                 orderReqDto.getStartTime(),
                 orderReqDto.getEndTime(),
+                orderReqDto.getStart(),
+                orderReqDto.getEnd(),
                 orderReqDto.getLuggageImgUrl(),
                 LuggageStatus.REGISTER
         );
@@ -129,7 +132,7 @@ public class OrderService {
 
         order.update(
                 orderReqDto.getStart(),
-                orderReqDto.getDestination(),
+                orderReqDto.getEnd(),
                 orderReqDto.getStartTime(),
                 orderReqDto.getEndTime(),
                 orderReqDto.getLuggageImgUrl()

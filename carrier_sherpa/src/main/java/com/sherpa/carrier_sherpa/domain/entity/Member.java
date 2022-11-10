@@ -1,8 +1,7 @@
 package com.sherpa.carrier_sherpa.domain.entity;
 
 import com.sherpa.carrier_sherpa.domain.enums.MemberRole;
-import com.sherpa.carrier_sherpa.dto.MemberCreateReqDto;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberCreateReqDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

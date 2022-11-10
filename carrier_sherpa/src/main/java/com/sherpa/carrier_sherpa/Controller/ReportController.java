@@ -3,8 +3,8 @@ package com.sherpa.carrier_sherpa.Controller;
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.entity.Report;
 import com.sherpa.carrier_sherpa.domain.service.ReportService;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
-import com.sherpa.carrier_sherpa.dto.OrderFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Orders.OrderFormDto;
 import com.sherpa.carrier_sherpa.dto.ReportFormDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/reports")

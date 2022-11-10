@@ -1,19 +1,17 @@
 package com.sherpa.carrier_sherpa.domain.service;
 
-import com.sherpa.carrier_sherpa.config.PrincipalDetails;
 import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.enums.MemberRole;
 import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
-import com.sherpa.carrier_sherpa.dto.MemberCreateReqDto;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
-import com.sherpa.carrier_sherpa.dto.MemberResDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberCreateReqDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RequiredArgsConstructor

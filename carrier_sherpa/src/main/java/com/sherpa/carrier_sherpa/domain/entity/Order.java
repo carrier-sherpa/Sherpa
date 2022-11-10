@@ -2,10 +2,12 @@ package com.sherpa.carrier_sherpa.domain.entity;
 
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
 import com.sherpa.carrier_sherpa.domain.service.LuggageService;
+import com.sherpa.carrier_sherpa.dto.type.Address;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 
@@ -24,17 +26,24 @@ public class Order  extends BaseEntity{
     private Member deliever;
 
     @Column(nullable = false)
-    private String start;
-
-    @Column(nullable = false)
-    private String destination;
-
-    @Column(nullable = false)
     private String start_time;
 
     @Column(nullable = false)
     private String end_time;
 
+    // 이넘이 위도
+    @Column(nullable = false)
+    private float start_lat;
+
+    //이넘잉 경도
+    @Column(nullable = false)
+    private float start_lng;
+
+    @Column(nullable = false)
+    private float end_lat;
+
+    @Column(nullable = false)
+    private float end_lng;
 
     private String luggage_image_url;
 
@@ -42,22 +51,25 @@ public class Order  extends BaseEntity{
     private LuggageStatus status;
 
 
+
     @Builder
     public Order(
             Member traveler,
             Member deliever,
-            String start,
-            String destination,
             String start_time,
             String end_time,
+            Address start,
+            Address end,
             String luggage_image_url,
             LuggageStatus status) {
         this.traveler = traveler;
         this.deliever = deliever;
-        this.start = start;
-        this.destination = destination;
         this.start_time = start_time;
         this.end_time = end_time;
+        this.start_lat = start.getLat();
+        this.start_lng = start.getLng();
+        this.end_lat = end.getLat();
+        this.end_lng = end.getLng();
         this.luggage_image_url = luggage_image_url;
         this.status = status;
     }
@@ -66,8 +78,8 @@ public class Order  extends BaseEntity{
             String id,
             Member traveler,
             Member deliever,
-            String start,
-            String destination,
+            Address start,
+            Address end,
             String start_time,
             String end_time,
             String luggage_image_url,
@@ -75,22 +87,22 @@ public class Order  extends BaseEntity{
         super(id);
         this.traveler = traveler;
         this.deliever = deliever;
-        this.start = start;
-        this.destination = destination;
         this.start_time = start_time;
         this.end_time = end_time;
+        this.start_lat = start.getLat();
+        this.start_lng = start.getLng();
+        this.end_lat = end.getLat();
+        this.end_lng = end.getLng();
         this.luggage_image_url = luggage_image_url;
         this.status = status;
     }
 
     public void update(
-            String start,
-            String destination,
+            Address start,
+            Address end,
             String start_time,
             String end_time,
             String luggage_image_url) {
-        this.start = start;
-        this.destination = destination;
         this.start_time = start_time;
         this.end_time = end_time;
         this.luggage_image_url = luggage_image_url;
