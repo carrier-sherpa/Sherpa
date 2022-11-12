@@ -21,20 +21,6 @@ class LuggageTest {
 
     @Test
     void test(){
-        Member testMember = memberRepository.findByEmail("email");
-        System.out.println(testMember.getRole());
-        Luggage luggage = new Luggage(
-                testMember,
-                "seoul",
-                "incheon",
-                "2022.11.01",
-                "2022.11.10",
-                null,
-                LuggageType.MEDIUM,
-                LuggageStatus.REGISTER
-        );
-
-        luggageRepository.save(luggage);
 
 
 

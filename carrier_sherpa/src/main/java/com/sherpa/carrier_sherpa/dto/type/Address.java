@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Address {
-    private float lat;
-    private float lng;
+    private Double lat;
+    private Double lng;
 }

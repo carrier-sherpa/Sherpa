@@ -23,11 +23,5 @@ class OrderServiceTest {
 
     @Test
     void create() {
-        Luggage luggage = new Luggage(
-                new Member(),
-                new Order(),
-                LuggageType.valueOf("BIG"),
-                luggageReqDto.getNum()
-        );
     }
 }

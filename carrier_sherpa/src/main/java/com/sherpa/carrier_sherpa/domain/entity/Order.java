@@ -33,17 +33,17 @@ public class Order  extends BaseEntity{
 
     // 이넘이 위도
     @Column(nullable = false)
-    private float start_lat;
+    private Double start_lat;
 
     //이넘잉 경도
     @Column(nullable = false)
-    private float start_lng;
+    private Double start_lng;
 
     @Column(nullable = false)
-    private float end_lat;
+    private Double end_lat;
 
     @Column(nullable = false)
-    private float end_lng;
+    private Double end_lng;
 
     private String luggage_image_url;
 
