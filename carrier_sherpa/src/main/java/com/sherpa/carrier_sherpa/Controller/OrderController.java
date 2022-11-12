@@ -40,6 +40,16 @@ public class OrderController {
         return orderService.findByMemberId(memberResDto.getId());
     }
 
+    @GetMapping("/distance")
+    public List<OrderResDto> findByDistance(
+            HttpServletRequest httpServletRequest,
+            @RequestParam(value = "lat") Double lat,
+            @RequestParam(value = "lng") Double lng
+    ) {
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return orderService.findByDistance(memberResDto.getId(), lat, lng);
+     }
     @PostMapping("")
     public OrderResDto create(
             HttpServletRequest httpServletRequest,

@@ -25,13 +25,14 @@ public class OrderResDto {
     public static OrderResDto of(
             Order order
     ){
-//        if (order.getDeliever().getId() == null) {
-//            return new OrderResDto(
-//                    order.getId(),
-//                   "None",
-//                    String.valueOf(order.getDeliever().getId()),
-//                    LuggageStatus.ACCEPT);
-//        }
+        if (order.getDeliever()==null) {
+            System.out.println("test");
+            return new OrderResDto(
+                    order.getId(),
+                    order.getTraveler().getId(),
+                   "None",
+                    LuggageStatus.ACCEPT);
+        }
         return new OrderResDto(
                 order.getId(),
                 order.getTraveler().getId(),

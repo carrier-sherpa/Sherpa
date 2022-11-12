@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -54,6 +55,18 @@ public class OrderService {
         // NPE 발생 X -> 아무것도 없는 애들도 그냥 빈 리스트로 출력
 
         return luggages;
+    }
+
+    public List<OrderResDto> findByDistance(String memberId, Double lat, Double lng){
+        List<Order> orders = orderRepository.findAll()
+                .stream()
+                .filter(order -> getDistance(order.getStart_lat(),order.getStart_lng(),lat,lng)<1.0001)
+                .collect(Collectors.toList());
+
+        return orders
+                .stream()
+                .map(order -> OrderResDto.of(order))
+                .collect(Collectors.toList());
     }
 
     public static Double getDistance(Double lat, Double lnt, Double lat2, Double lnt2) {
@@ -102,8 +115,8 @@ public class OrderService {
                     );
         }
 //        OrderResDto.of NPE 발생!!
-//        return new OrderResDto().of(order);
-        return null;
+        return new OrderResDto().of(order);
+//        return null;
     }
 
     public OrderResDto accept(String delieverId, String orderId){
@@ -131,7 +144,6 @@ public class OrderService {
         // 유저에게 푸쉬메시지 날라가는 API도 필요할 듯
 
         return new OrderResDto().of(order);
-
     }
 
     public OrderResDto update(String travelerId, String orderId, OrderReqDto orderReqDto) {
