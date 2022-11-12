@@ -22,9 +22,9 @@ public class Luggage  extends BaseEntity{
 //    private Long id;
     // 지우고 다시해도 AutoIncrement 적용. 다시 초기화 하는 방법은?
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "id",name = "member_id")
-    private Member member;
+//    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(referencedColumnName = "id",name = "member_id")
+//    private Member member;
 //  문맥상 owner라는 value 네이밍이 맞지만 Error:link falilure 발생. member로 바꿈
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -41,25 +41,23 @@ public class Luggage  extends BaseEntity{
 
     @Builder
     public Luggage(
-            Member member,
             Order order,
             LuggageType size,
             int num
     ) {
         this.order = order;
-        this.member = member;
         this.size = size;
         this.num = num;
     }
 
     public Luggage(
             String id,
-            Member member,
+            Order order,
             LuggageType size,
             int num
     ) {
         super(id);
-        this.member = member;
+        this.order = order;
         this.size = size;
         this.num = num;
     }

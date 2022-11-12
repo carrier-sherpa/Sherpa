@@ -17,11 +17,11 @@ import javax.persistence.*;
 @Entity
 public class Order  extends BaseEntity{
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name = "traveler_id")
     private Member traveler;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(referencedColumnName = "id", name = "deliever_id")
     private Member deliever;
 

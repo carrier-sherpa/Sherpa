@@ -31,18 +31,12 @@ public class LuggageService {
         this.orderRepository = orderRepository;
     }
 
-    public List<LuggageResDto> findByMemberId(String id){
-        List<Luggage> luggages =luggageRepository.findByMember_Id(id);
-        // NPE 발생 가능 , 오류 처리 필요할지도?
-        // NPE 발생 X -> 아무것도 없는 애들도 그냥 빈 리스트로 출력
-        for ( Luggage luggage : luggages){
-            System.out.println("luggage id : "+luggage.getId());
-        }
-        return luggages.stream()
-                .map(luggage -> new LuggageResDto(luggage))
+    public List<LuggageResDto> findByOrderId(String orderId){
+        return luggageRepository.findByOrderId(orderId)
+                .stream()
+                .map(luggage->new LuggageResDto(luggage))
                 .collect(Collectors.toList());
     }
-
     public Luggage create(String memberId,String orderId, LuggageReqDto luggageReqDto) {
         // Member 확인을 위해 MmeberREpository를 쓴다? 불필요해보이지만...
         Member loginMember = memberRepository.findById(memberId).orElseThrow(
@@ -58,10 +52,7 @@ public class LuggageService {
                 )
         );
 
-        System.out.println("maybe here");
-        System.out.println("test : "+luggageReqDto.getSize());
         Luggage luggage = new Luggage(
-                loginMember,
                 order,
                 LuggageType.valueOf(luggageReqDto.getSize()),
                 luggageReqDto.getNum()
@@ -87,13 +78,6 @@ public class LuggageService {
                 new BaseException(
                         ErrorCode.NOT_LUGGAGE,
                         "해당하는 짐이 존재하지 않습니다."
-                );
-            }
-
-            if (!luggage.getMember().getId().equals(memberId)) {
-                throw new BaseException(
-                        ErrorCode.NOT_LUGGAGE,
-                        "캐리어 변경 권한이 존재하지 않습니다."
                 );
             }
 
@@ -125,12 +109,7 @@ public class LuggageService {
         )
         );
         // 이미 삭제되 경우 validation 추가 -> 존재하지 않는 캐리어와 이미 삭제한 캐리어 라는 중복되는 validation
-        if (!luggage.getMember().getId().equals(memberId)) {
-            throw new BaseException(
-                    ErrorCode.NOT_LUGGAGE,
-                    "캐리어 변경 권한이 존재하지 않습니다."
-            );
-        }
+
         // 완전 삭제는 아니고 일단 구현. 추후 refactoring
         //물갈이중 오류
 //        if (luggage.getStatus().equals(LuggageStatus.INACTIVE)) {
@@ -142,5 +121,4 @@ public class LuggageService {
 //        luggage.setStatus(LuggageStatus.INACTIVE);
         return luggageRepository.save(luggage);
     }
-
 }

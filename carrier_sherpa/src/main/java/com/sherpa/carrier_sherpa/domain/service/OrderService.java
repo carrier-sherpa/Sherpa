@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -45,7 +46,12 @@ public class OrderService {
                         "해당하는 유저가 존재하지 않습니다."
                 )
         );
-        List<LuggageResDto> luggages = luggageService.findByMemberId(memberId);
+
+        // 한 사람이 여러 개의 order를 가질 수 없는 것을 전제. 만약 이럴 경우 오류 날 것.
+        Optional<Order> order = orderRepository.findById(memberId);
+        List<LuggageResDto> luggages = luggageService.findByOrderId(order.get().getId());
+        // NPE 발생 가능 , 오류 처리 필요할지도?
+        // NPE 발생 X -> 아무것도 없는 애들도 그냥 빈 리스트로 출력
 
         return luggages;
     }
@@ -76,7 +82,8 @@ public class OrderService {
                     luggage
                     );
         }
-
+//        OrderResDto.of NPE 발생!!
+//        return new OrderResDto().of(order);
         return null;
     }
 
@@ -146,6 +153,32 @@ public class OrderService {
             );
         }
 
-        return new OrderResDto().of(order);
+        //!!!!
+//        return new OrderResDto().of(order); OrderResDto NPE 처리 필요
+        return null;
+    }
+
+    public OrderResDto delete(String memberId, String orderId) {
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "해당하는 유저가 존재하지 않습니다."
+                )
+        );
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_ORDER,
+                        "해당하는 서비스가 존재하지 않습니다."
+                )
+        );
+        if(!loginMember.getId().equals(order.getTraveler().getId())){
+            throw new BaseException(
+                    ErrorCode.NOT_LUGGAGE,
+                    "캐리어 변경 권한이 존재하지 않습니다."
+            );
+        }
+        orderRepository.delete(order);
+
+        return null;
     }
 }

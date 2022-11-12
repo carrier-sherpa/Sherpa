@@ -27,7 +27,7 @@ public class LuggageController {
             HttpServletRequest httpServletRequest){
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-        return luggageService.findByMemberId(memberResDto.getId());
+        return null;
     }
 
     @PostMapping("")

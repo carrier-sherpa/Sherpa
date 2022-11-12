@@ -49,8 +49,8 @@ public class MemberService {
         memberRepository.save(createMember);
 
         return new MemberResDto(
-                findMember.get().getId(),
-                findMember.get().getEmail());
+                createMember.getId(),
+                createMember.getEmail());
     }
 
     public MemberResDto signIn(MemberFormDto memberformDto) {

@@ -1,5 +1,6 @@
 package com.sherpa.carrier_sherpa.Controller;
 
+import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.service.OrderService;
 import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
 import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
@@ -67,5 +68,15 @@ public class OrderController {
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
         return orderService.update(memberResDto.getId(),orderId, orderReqDto);
+    }
+
+    @DeleteMapping("/{orderId}")
+    public OrderResDto delete(
+            HttpServletRequest httpServletRequestl,
+            @PathVariable("orderId") String orderId
+    ){
+        HttpSession httpSession = httpServletRequestl.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return orderService.delete(memberResDto.getId(),orderId);
     }
 }
