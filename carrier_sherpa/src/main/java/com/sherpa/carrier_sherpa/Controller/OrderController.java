@@ -4,6 +4,7 @@ import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.service.OrderService;
 import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
 import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
+import com.sherpa.carrier_sherpa.dto.Orders.DelieverReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderResDto;
 import lombok.RequiredArgsConstructor;
@@ -43,12 +44,11 @@ public class OrderController {
     @GetMapping("/distance")
     public List<OrderResDto> findByDistance(
             HttpServletRequest httpServletRequest,
-            @RequestParam(value = "lat") Double lat,
-            @RequestParam(value = "lng") Double lng
+            @RequestBody DelieverReqDto delieverReqDto
     ) {
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-        return orderService.findByDistance(memberResDto.getId(), lat, lng);
+        return orderService.findByDistance(memberResDto.getId(), delieverReqDto);
      }
     @PostMapping("")
     public OrderResDto create(

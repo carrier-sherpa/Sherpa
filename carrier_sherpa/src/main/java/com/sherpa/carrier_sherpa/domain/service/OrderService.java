@@ -1,5 +1,6 @@
 package com.sherpa.carrier_sherpa.domain.service;
 
+import com.sherpa.carrier_sherpa.domain.entity.Luggage;
 import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
@@ -9,6 +10,7 @@ import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
 import com.sherpa.carrier_sherpa.domain.repository.OrderRepository;
 import com.sherpa.carrier_sherpa.dto.Luggage.LuggageReqDto;
 import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
+import com.sherpa.carrier_sherpa.dto.Orders.DelieverReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderResDto;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +37,9 @@ public class OrderService {
                         "해당하는 서비스가 존재하지 않습니다."
                 )
         );
-        OrderResDto orderResDto = new OrderResDto();
-        orderResDto.of(order);
-        return orderResDto;
+        List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
+
+        return new OrderResDto().of(order,luggages);
     }
 
     public List<LuggageResDto> findByMemberId(String memberId){
@@ -57,15 +59,23 @@ public class OrderService {
         return luggages;
     }
 
-    public List<OrderResDto> findByDistance(String memberId, Double lat, Double lng){
-        List<Order> orders = orderRepository.findAll()
+    public List<OrderResDto> findByDistance(String memberId, DelieverReqDto delieverReqDto){
+        List<Order> inStart = orderRepository.findAll()
                 .stream()
-                .filter(order -> getDistance(order.getStart_lat(),order.getStart_lng(),lat,lng)<1.0001)
+                .filter(order ->
+                        getDistance(order.getStart_lat(),order.getStart_lng(), delieverReqDto.getStart().getLat(), delieverReqDto.getStart().getLng())<1.0001)
                 .collect(Collectors.toList());
 
-        return orders
+        List<Order> inEnd = inStart
                 .stream()
-                .map(order -> OrderResDto.of(order))
+                .filter(order ->
+                        getDistance(order.getEnd_lat(),order.getEnd_lng(), delieverReqDto.getEnd().getLat(), delieverReqDto.getEnd().getLng())<1.0001)
+                .collect(Collectors.toList());
+        // Order -> OrderResDto( Order, List<Luggage> by OrderId )
+
+        return inEnd
+                .stream()
+                .map(order -> OrderResDto.of(order,luggageService.findByOrderId(order.getId()) ))
                 .collect(Collectors.toList());
     }
 
@@ -114,9 +124,10 @@ public class OrderService {
                     luggage
                     );
         }
-//        OrderResDto.of NPE 발생!!
-        return new OrderResDto().of(order);
-//        return null;
+        List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
+
+        return new OrderResDto().of(order,luggages);
+
     }
 
     public OrderResDto accept(String delieverId, String orderId){
@@ -143,7 +154,9 @@ public class OrderService {
         orderRepository.save(order);
         // 유저에게 푸쉬메시지 날라가는 API도 필요할 듯
 
-        return new OrderResDto().of(order);
+        List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
+
+        return new OrderResDto().of(order,luggages);
     }
 
     public OrderResDto update(String travelerId, String orderId, OrderReqDto orderReqDto) {
