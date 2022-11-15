@@ -2,6 +2,8 @@ package com.sherpa.carrier_sherpa.domain.service;
 
 import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.enums.MemberRole;
+import com.sherpa.carrier_sherpa.domain.exception.BaseException;
+import com.sherpa.carrier_sherpa.domain.exception.ErrorCode;
 import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
 import com.sherpa.carrier_sherpa.dto.Member.MemberCreateReqDto;
 import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Transactional
@@ -39,6 +43,13 @@ public class MemberService {
         if (findMember.isPresent()) {
             throw new IllegalStateException("존재하는 회원입니다.");
         }
+        if (!validatePassword(memberCreateReqDto.getPassword())){
+            throw new BaseException(
+                    ErrorCode.INVALID_PASSWORD_FORMAT,
+                    "영문, 특수문자, 숫자 포함 8자 이상으로 비밀번호를 작성해야 합니다."
+            );
+        }
+
 
         Member createMember = Member.builder()
                 .email(memberCreateReqDto.getEmail())
@@ -53,13 +64,22 @@ public class MemberService {
                 createMember.getEmail());
     }
 
+    public boolean validatePassword(String password) {
+
+        // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
+        String passwordPolicy = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$";
+
+        Pattern pattern_password = Pattern.compile(passwordPolicy);
+        Matcher matcher_password = pattern_password.matcher(password);
+
+        return matcher_password.matches();
+    }
+
     public MemberResDto signIn(MemberFormDto memberformDto) {
         Optional<Member> loginMember = memberRepository.findByEmail(memberformDto.getEmail());
         if (loginMember == null) {
             throw new IllegalStateException("존재하지 않는 회원입니다.");
         }
-        System.out.println("memberformDto.getPassword() = " + bCryptPasswordEncoder.encode(memberformDto.getPassword()));
-        System.out.println("loginMember.getPassword = " + loginMember.get().getPassword());
         if (!bCryptPasswordEncoder.matches(memberformDto.getPassword(),loginMember.get().getPassword())) {
             throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
         }

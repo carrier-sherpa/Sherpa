@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface LuggageRepository extends JpaRepository<Luggage,String> {
     List<Luggage> findByOrderId(String OrderId);
-    Luggage save(Luggage luggage);
 }

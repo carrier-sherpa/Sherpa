@@ -31,7 +31,6 @@ public class OrderController {
         return orderService.findById(memberResDto.getId(),orderId);
     }
 
-    // 나중에는 거리로 find하는 것도 구현해야 할지도
     @GetMapping("/memberId")
     public List<LuggageResDto> findByMemberId(
             HttpServletRequest httpServletRequest

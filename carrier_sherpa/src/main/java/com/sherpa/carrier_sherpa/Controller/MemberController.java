@@ -40,13 +40,4 @@ public class MemberController {
         session.setAttribute("loginMember",memberService.signIn(memberFormDto));
         return loginMember;
     }
-
-    @ResponseBody
-    @GetMapping("/test")
-    public MemberResDto test(
-            HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession();
-        MemberFormDto memberFormDto = (MemberFormDto) session.getAttribute("loginMember");
-        return memberService.findByEmail(memberFormDto.getEmail());
-    }
 }

@@ -21,13 +21,14 @@ public class ReportController {
 
     private final ReportService reportService;
 
+    @ResponseBody
     @GetMapping(value = "/new")
     public String reportForm(Model model) {
         model.addAttribute("reportFormDto", new MemberFormDto());
         return "report/reportForm";
     }
 
-    //TODO: url 이렇게 하면 되는지 확인하기
+    @ResponseBody
     @PostMapping(value = "/new")
     public String reportForm(@Valid ReportFormDto reportFormDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -45,14 +46,5 @@ public class ReportController {
         return "/";
     }
 
-    @DeleteMapping(value = "/delete/{reportId}")
-    public void deleteReport(@PathVariable Long reportId) {
-        reportService.deleteReport(reportId);
-    }
-
-    @GetMapping(value = "/{reportId}")
-    public void getReportFormDto(@PathVariable Long reportId) {
-        reportService.findReport(reportId);
-    }
 
 }
