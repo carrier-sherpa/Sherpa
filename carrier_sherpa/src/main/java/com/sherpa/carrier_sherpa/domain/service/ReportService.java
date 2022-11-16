@@ -1,10 +1,17 @@
 package com.sherpa.carrier_sherpa.domain.service;
 
+import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.entity.Report;
+import com.sherpa.carrier_sherpa.domain.enums.ReportType;
+import com.sherpa.carrier_sherpa.domain.exception.BaseException;
+import com.sherpa.carrier_sherpa.domain.exception.ErrorCode;
+import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
 import com.sherpa.carrier_sherpa.domain.repository.OrderRepository;
 import com.sherpa.carrier_sherpa.domain.repository.ReportRepository;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderFormDto;
+import com.sherpa.carrier_sherpa.dto.Report.ReportReqDto;
+import com.sherpa.carrier_sherpa.dto.Report.ReportResDto;
 import com.sherpa.carrier_sherpa.dto.ReportFormDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,45 +22,34 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ReportService {
 
-    private final OrderService orderService;
-    private final MemberService memberService;
-    private final ReportRepository reportRepository;
+    private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
+    private final ReportRepository reportRepository;
 
-    public Report saveReport(Report report, Order order) {
-        validateDuplicateReport(report, order);
-        return reportRepository.save(report);
-    }
 
-    private void validateDuplicateReport(Report report, Order order) {
-/*        Report findOrder = reportRepository.findByOrderId(order.getId());
-        if (findOrder != null) {
-            throw new IllegalStateException("이미 신고가 들어갔습니다.");
-        }*/
-    }
+    public ReportResDto create(String memberId, String orderId, ReportReqDto reportReqDto) {
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "존재하지 않는 유저입니다."
+                )
+        );
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_ORDER,
+                        "존재하지 않는 서비스입니다."
+                )
+        );
 
-    public Report createReport(ReportFormDto reportFormDto, OrderFormDto orderFormDto) {
+        Report report = new Report(
+                order,
+                ReportType.valueOf(reportReqDto.getReportType()),
+                reportReqDto.getContent()
+        );
 
-//        return Report.builder()
-//                .order(orderRepository.findById(orderFormDto.getOrderId())
-//                        .orElseThrow(() -> new IllegalStateException("해당하는 order가 업습니다")))
-////                .sender(memberService.createMember(reportFormDto.getSenderFormDto()))
-////                .courier(memberService.createMember(reportFormDto.getCourierFormDto()))
-//                .reportType(reportFormDto.getReportType())
-//                .build();
-        return null;
-    }
+        String reportId = reportRepository.save(report).getId();
 
-    public Report findReport(Long reportId) {
-        return reportRepository.findById(reportId).orElseThrow(() ->
-                new IllegalStateException());
-    }
+        return new ReportResDto(reportId, report.getReportType().toString());
 
-    public void deleteReport(Long reportId) {
-        reportRepository.deleteById(reportId);
-    }
-
-    public ReportFormDto createReportFormDto(Report report) {
-        return null;
     }
 }

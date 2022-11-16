@@ -14,29 +14,26 @@ import javax.persistence.*;
 @Entity
 public class Report  extends BaseEntity{
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "report_id")
-//    private Long id;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private Order order;
 
     private ReportType reportType;
 
-    private String details;
+    private String content;
 
     @Builder
-    public Report( Order order, Member sender, Member courier, ReportType reportType, String details) {
+    public Report( Order order, ReportType reportType, String content) {
         this.order = order;
         this.reportType = reportType;
-        this.details = details;
+        this.content = content;
     }
 
-    public Report( String id,Order order, Member sender, Member courier, ReportType reportType, String details) {
+    public Report( String id, Order order, ReportType reportType, String content) {
         super(id);
+        this.order = order;
         this.reportType = reportType;
-        this.details = details;
+        this.content = content;
     }
+
 }
