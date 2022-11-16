@@ -28,23 +28,4 @@ public class ReportController {
         return "report/reportForm";
     }
 
-    @ResponseBody
-    @PostMapping(value = "/new")
-    public String reportForm(@Valid ReportFormDto reportFormDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "/";
-        }
-
-        try {
-            //TODO: OrderFormDto 받는 법을 다른 방식으로 해야댈듯
-            Report report = reportService.createReport(reportFormDto, new OrderFormDto());
-            reportService.saveReport(report, new Order());
-        } catch (IllegalStateException e) {
-            //TODO: 에러 알려주는 url로 가야함
-            return "";
-        }
-        return "/";
-    }
-
-
 }

@@ -83,6 +83,12 @@ public class MemberService {
         if (!bCryptPasswordEncoder.matches(memberformDto.getPassword(),loginMember.get().getPassword())) {
             throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
         }
+        if(loginMember.get().getRole().equals(MemberRole.REPORTED)){
+            throw new BaseException(
+                    ErrorCode.NOT_AUTHORIZATION,
+                    "신고가 접수된 사용자입니다."
+            );
+        }
         return new MemberResDto(
                 loginMember.get().getId(),
                 loginMember.get().getEmail());
