@@ -8,7 +8,9 @@ public enum ErrorCode {
     NOT_LUGGAGE(4001),
     NOT_AUTHORIZATION(4002),
     NOT_ORDER(4003),
-    INVALID_PASSWORD_FORMAT(4004)
+    NOT_REPORT(4004),
+    INVALID_PASSWORD_FORMAT(4005),
+
     ;
 
     private int code;

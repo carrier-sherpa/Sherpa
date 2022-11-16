@@ -12,6 +12,7 @@ import com.sherpa.carrier_sherpa.dto.Orders.OrderResDto;
 import com.sherpa.carrier_sherpa.dto.Report.ReportReqDto;
 import com.sherpa.carrier_sherpa.dto.Report.ReportResDto;
 import com.sherpa.carrier_sherpa.dto.ReportFormDto;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,11 +26,20 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/reports")
-@Controller
+@RestController
 public class ReportController {
 
     private final ReportService reportService;
 
+    @GetMapping("/reportId/{Id}")
+    public ReportResDto findByReportId(
+            HttpServletRequest httpServletRequest,
+            @RequestParam ("id") String reportId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return reportService.findByReportId(memberResDto.getId(),reportId);
+    }
 //    @GetMapping("/reporterId/{id}")
 //    public List<ReportResDto> findByReporterId(
 //            HttpServletRequest httpServletRequest,
@@ -39,17 +49,17 @@ public class ReportController {
 //        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
 //        return reportService.findByReporterId(memberResDto.getId(),reporterId);
 //    }
-//
-//    @GetMapping("/reportedId/{id}")
-//    public List<ReportResDto> findByReportedId(
-//            HttpServletRequest httpServletRequest,
-//            @RequestParam ("id") String reportedId
-//    ){
-//        HttpSession httpSession = httpServletRequest.getSession();
-//        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-//        return reportService.findByReportedId(memberResDto.getId(),reportedId);
-//    }
-//
+
+    @GetMapping("/reportedId/{id}")
+    public List<ReportResDto> findByReportedId(
+            HttpServletRequest httpServletRequest,
+            @PathVariable ("id") String reportedId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return reportService.findByReportedId(memberResDto.getId(),reportedId);
+    }
+
 //    @GetMapping("/orderId/{orderId}")
 //    public List<ReportResDto> findByOrderId(
 //            HttpServletRequest httpServletRequest,

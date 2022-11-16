@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -49,7 +52,42 @@ public class ReportService {
 
         String reportId = reportRepository.save(report).getId();
 
-        return new ReportResDto(reportId, report.getReportType().toString());
+        return new ReportResDto().of(report);
+    }
 
+    public ReportResDto findByReportId(
+            String memberId,
+            String reportId
+    ){
+        Report report = reportRepository.findById(reportId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_REPORT,
+                        "해당하는 신고 내역이 존재하지 않습니다."
+                )
+        );
+        return new ReportResDto().of(report);
+    }
+
+    public List<ReportResDto> findByReportedId(
+            String memberId,
+            String reportedId
+    ){
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "존재하지 않는 유저입니다."
+                )
+        );
+        Order order = reportRepository.findById(reportedId)
+                .orElseThrow(
+                        ()->new BaseException(
+                                ErrorCode.NOT_REPORT,
+                                "해당하는 신고 내역이 존재하지 않습니다."
+                        )
+                )
+                .getOrder();
+        return reportRepository.findByReported(reportedId).stream()
+                .map(report -> new ReportResDto().of(report))
+                .collect(Collectors.toList());
     }
 }
