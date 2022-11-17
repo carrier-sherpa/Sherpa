@@ -30,13 +30,15 @@ public class Report  extends BaseEntity{
 
     private String content;
 
+    private int tripScore;
     @Builder
-    public Report( Member reporter,Member reported, Order order, ReportType reportType, String content) {
+    public Report( Member reporter,Member reported, Order order, ReportType reportType, String content, int tripScore) {
         this.reporter = reporter;
         this.reported = reported;
         this.order = order;
         this.reportType = reportType;
         this.content = content;
+        this.tripScore= tripScore;
     }
 
     public Report( Member reporter,Member reported,String id, Order order, ReportType reportType, String content) {

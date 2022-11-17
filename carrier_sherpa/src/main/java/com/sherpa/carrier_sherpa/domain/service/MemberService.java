@@ -62,6 +62,7 @@ public class MemberService {
                 .email(memberCreateReqDto.getEmail())
                 .password(bCryptPasswordEncoder.encode(memberCreateReqDto.getPassword()))
                 .role(MemberRole.USER)
+                .tripEnergy(23)
                 .build();
 
         memberRepository.save(createMember);

@@ -31,7 +31,15 @@ public class ReportService {
 
 
     public ReportResDto create(String memberId, String reported, String orderId, ReportReqDto reportReqDto) {
+
         Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "존재하지 않는 유저입니다."
+                )
+        );
+
+        Member reportedMember = memberRepository.findById(reported).orElseThrow(
                 ()->new BaseException(
                         ErrorCode.NOT_USER,
                         "존재하지 않는 유저입니다."
@@ -44,20 +52,38 @@ public class ReportService {
                         "존재하지 않는 서비스입니다."
                 )
         );
+        // 신고자가 order와 관계 X validation 처리
+        if (!loginMember.equals(order.getDeliever()) && !loginMember.equals(order.getTraveler())){
+            throw new BaseException(
+                    ErrorCode.NOT_AUTHORIZATION,
+                    "신고 권한이 없습니다."
+            );
+        }
 
-        Report report = new Report(
-                loginMember,
-                memberRepository.findById(reported).orElseThrow(
-                        ()->new BaseException(
+
+        // Order와 전혀 관계없는 member를 신고 가능 validation 처리 필요
+        if (!reported.equals(order.getDeliever().getId()) && !reported.equals(order.getTraveler().getId())){
+            throw new BaseException(
+                    ErrorCode.NOT_AUTHORIZATION,
+                    "잘못된 신고 대상입니다."
+            );
+        }
+
+        Report report = Report.builder()
+                .reporter(loginMember)
+                .reported(memberRepository.findById(reported).orElseThrow(
+                        () -> new BaseException(
                                 ErrorCode.NOT_USER,
                                 "존재하지 않는 유저입니다."
                         )
-                ),
-                order,
-                ReportType.valueOf(reportReqDto.getReportType()),
-                reportReqDto.getContent()
-        );
-
+                ))
+                .order(order)
+                .reportType(ReportType.valueOf(reportReqDto.getReportType()))
+                .content(reportReqDto.getContent())
+                .tripScore(reportReqDto.getTripScore())
+                .build();
+        reportedMember.setTripEnergy(reportReqDto.getTripScore());
+        memberRepository.save(reportedMember);
 //        String reportId = reportRepository.save(report).getId();
 
         return new ReportResDto().of(reportRepository.save(report));

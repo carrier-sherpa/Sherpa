@@ -10,5 +10,5 @@ public class ReportReqDto {
 
     private String reportType;
     private String content;
-
+    private int tripScore;
 }
