@@ -63,13 +63,16 @@ public class OrderService {
         List<Order> inStart = orderRepository.findAll()
                 .stream()
                 .filter(order ->
-                        getDistance(order.getStart_lat(),order.getStart_lng(), delieverReqDto.getStart().getLat(), delieverReqDto.getStart().getLng())<1.0001)
+                        getDistance(order.getStart_lat(),order.getStart_lng(), delieverReqDto.getStart().getLat(), delieverReqDto.getStart().getLng())<1.0001
+                        || getDistance(order.getStart_lat(),order.getStart_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
                 .collect(Collectors.toList());
+
 
         List<Order> inEnd = inStart
                 .stream()
                 .filter(order ->
-                        getDistance(order.getEnd_lat(),order.getEnd_lng(), delieverReqDto.getEnd().getLat(), delieverReqDto.getEnd().getLng())<1.0001)
+                        getDistance(order.getEnd_lat(),order.getEnd_lng(), delieverReqDto.getEnd().getLat(), delieverReqDto.getEnd().getLng())<1.0001
+                        || getDistance(order.getEnd_lat(),order.getEnd_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
                 .collect(Collectors.toList());
         // Order -> OrderResDto( Order, List<Luggage> by OrderId )
 
