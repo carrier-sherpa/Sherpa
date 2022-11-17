@@ -143,13 +143,20 @@ public class OrderService {
                         "해당하는 유저가 존재하지 않습니다."
                 )
         );
-        if (order.getTraveler().equals(delieverId)){
+
+        if (order.getTraveler().getId().equals(delieverId)){
             throw new BaseException(
                     ErrorCode.NOT_AUTHORIZATION,
                     "Traveler와 Deliever가 동일합니다."
             );
         }
 
+        if (!(order.getDeliever()==null)){
+            throw new BaseException(
+                    ErrorCode.NOT_AUTHORIZATION,
+                    "해당 서비스는 다른 Deliever가 존재합니다."
+            );
+        }
         order.accept(loginMember);
         orderRepository.save(order);
         // 유저에게 푸쉬메시지 날라가는 API도 필요할 듯

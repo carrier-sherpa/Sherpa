@@ -38,8 +38,15 @@ public class MemberService {
     }
 
     public MemberResDto signUp(MemberCreateReqDto memberCreateReqDto) {
-        System.out.println("memberCreateReqDto = " + memberCreateReqDto.getEmail());
+
+        if (memberCreateReqDto.getEmail() == null || memberCreateReqDto.getPassword() == null) {
+            throw new BaseException(
+                    ErrorCode.NULL_VALUE,
+                    "필수값이 입력되지 않았습니다."
+            );
+        }
         Optional<Member> findMember = memberRepository.findByEmail(memberCreateReqDto.getEmail());
+
         if (findMember.isPresent()) {
             throw new IllegalStateException("존재하는 회원입니다.");
         }
