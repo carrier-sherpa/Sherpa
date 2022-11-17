@@ -107,8 +107,8 @@ public class OrderService {
         Order order = new Order(
                 loginMember,
                 null,
-                orderReqDto.getStartTime(),
-                orderReqDto.getEndTime(),
+                orderReqDto.getStartTime().getHour()+":"+orderReqDto.getStartTime().getMinute(),
+                orderReqDto.getEndTime().getHour()+":"+orderReqDto.getEndTime().getMinute(),
                 orderReqDto.getStart(),
                 orderReqDto.getEnd(),
                 orderReqDto.getLuggageImgUrl(),
@@ -151,7 +151,7 @@ public class OrderService {
             );
         }
 
-        if (!(order.getDeliever()==null)){
+        if (order.getStatus()==LuggageStatus.ACCEPT){
             throw new BaseException(
                     ErrorCode.NOT_AUTHORIZATION,
                     "해당 서비스는 다른 Deliever가 존재합니다."
@@ -191,8 +191,8 @@ public class OrderService {
         order.update(
                 orderReqDto.getStart(),
                 orderReqDto.getEnd(),
-                orderReqDto.getStartTime(),
-                orderReqDto.getEndTime(),
+                orderReqDto.getStartTime().getHour()+":"+orderReqDto.getStartTime().getMinute(),
+                orderReqDto.getEndTime().getHour()+":"+orderReqDto.getEndTime().getMinute(),
                 orderReqDto.getLuggageImgUrl()
         );
 

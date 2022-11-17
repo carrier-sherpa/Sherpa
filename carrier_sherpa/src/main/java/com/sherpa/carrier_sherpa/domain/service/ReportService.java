@@ -30,13 +30,14 @@ public class ReportService {
     private final ReportRepository reportRepository;
 
 
-    public ReportResDto create(String memberId, String orderId, ReportReqDto reportReqDto) {
+    public ReportResDto create(String memberId, String reported, String orderId, ReportReqDto reportReqDto) {
         Member loginMember = memberRepository.findById(memberId).orElseThrow(
                 ()->new BaseException(
                         ErrorCode.NOT_USER,
                         "존재하지 않는 유저입니다."
                 )
         );
+
         Order order = orderRepository.findById(orderId).orElseThrow(
                 ()->new BaseException(
                         ErrorCode.NOT_ORDER,
@@ -45,14 +46,21 @@ public class ReportService {
         );
 
         Report report = new Report(
+                loginMember,
+                memberRepository.findById(reported).orElseThrow(
+                        ()->new BaseException(
+                                ErrorCode.NOT_USER,
+                                "존재하지 않는 유저입니다."
+                        )
+                ),
                 order,
                 ReportType.valueOf(reportReqDto.getReportType()),
                 reportReqDto.getContent()
         );
 
-        String reportId = reportRepository.save(report).getId();
+//        String reportId = reportRepository.save(report).getId();
 
-        return new ReportResDto().of(report);
+        return new ReportResDto().of(reportRepository.save(report));
     }
 
     public ReportResDto findByReportId(
@@ -72,22 +80,18 @@ public class ReportService {
             String memberId,
             String reportedId
     ){
-        Member loginMember = memberRepository.findById(memberId).orElseThrow(
-                ()->new BaseException(
-                        ErrorCode.NOT_USER,
-                        "존재하지 않는 유저입니다."
-                )
-        );
-        Order order = reportRepository.findById(reportedId)
-                .orElseThrow(
-                        ()->new BaseException(
-                                ErrorCode.NOT_REPORT,
-                                "해당하는 신고 내역이 존재하지 않습니다."
-                        )
-                )
-                .getOrder();
         return reportRepository.findByReported(reportedId).stream()
                 .map(report -> new ReportResDto().of(report))
                 .collect(Collectors.toList());
+    }
+    public List<ReportResDto> findByReporterId(
+            String memberId,
+            String reporterId
+    ){
+
+        return reportRepository.findByReporter(reporterId).stream()
+                .map(report -> new ReportResDto().of(report))
+                .collect(Collectors.toList());
+
     }
 }

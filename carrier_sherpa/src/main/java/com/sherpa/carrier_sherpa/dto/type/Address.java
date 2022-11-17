@@ -8,4 +8,12 @@ import lombok.NoArgsConstructor;
 public class Address {
     private Double lat;
     private Double lng;
+
+    public Address(
+            Double lat,
+            Double lng
+    ){
+        this.lat = lat;
+        this.lng = lng;
+    }
 }

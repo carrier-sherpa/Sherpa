@@ -10,4 +10,13 @@ public class DelieverReqDto {
 
     private Address start;
     private Address end;
+
+    public DelieverReqDto(
+            Double startLat,
+            Double startLng,
+            Double endLat,
+            Double endLng){
+        this.start = new Address(startLat, startLng);
+        this.end = new Address(endLat, endLng);
+    }
 }

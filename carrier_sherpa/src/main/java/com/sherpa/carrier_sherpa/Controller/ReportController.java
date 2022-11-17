@@ -40,15 +40,6 @@ public class ReportController {
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
         return reportService.findByReportId(memberResDto.getId(),reportId);
     }
-//    @GetMapping("/reporterId/{id}")
-//    public List<ReportResDto> findByReporterId(
-//            HttpServletRequest httpServletRequest,
-//            @RequestParam ("id") String reporterId
-//    ){
-//        HttpSession httpSession = httpServletRequest.getSession();
-//        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-//        return reportService.findByReporterId(memberResDto.getId(),reporterId);
-//    }
 
     @GetMapping("/reportedId/{id}")
     public List<ReportResDto> findByReportedId(
@@ -60,25 +51,26 @@ public class ReportController {
         return reportService.findByReportedId(memberResDto.getId(),reportedId);
     }
 
-//    @GetMapping("/orderId/{orderId}")
-//    public List<ReportResDto> findByOrderId(
-//            HttpServletRequest httpServletRequest,
-//            @RequestParam("orderId") String orderId
-//    ){
-//        HttpSession httpSession = httpServletRequest.getSession();
-//        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-//        return reportService.findByMemberId(memberResDto.getId(),orderId);
-//    }
+    @GetMapping("/reporterId/{id}")
+    public List<ReportResDto> findByReporterId(
+            HttpServletRequest httpServletRequest,
+            @PathVariable ("id") String reporterId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return reportService.findByReporterId(memberResDto.getId(),reporterId);
+    }
 
     @PostMapping("/{orderId}")
     public ReportResDto create(
             HttpServletRequest httpServletRequest,
             @RequestBody ReportReqDto reportReqDto,
-            @PathVariable("orderId") String orderId
+            @PathVariable("orderId") String orderId,
+            @RequestParam("report") String reported
     ){
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-        return reportService.create(memberResDto.getId(),orderId,reportReqDto);
+        return reportService.create(memberResDto.getId(),reported,orderId,reportReqDto);
     }
 
 }

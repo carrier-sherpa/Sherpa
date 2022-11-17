@@ -14,6 +14,14 @@ import javax.persistence.*;
 @Entity
 public class Report  extends BaseEntity{
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id", name = "reporter_id")
+    private Member reporter;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id", name = "reported_id")
+    private Member reported;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     private Order order;
@@ -23,14 +31,18 @@ public class Report  extends BaseEntity{
     private String content;
 
     @Builder
-    public Report( Order order, ReportType reportType, String content) {
+    public Report( Member reporter,Member reported, Order order, ReportType reportType, String content) {
+        this.reporter = reporter;
+        this.reported = reported;
         this.order = order;
         this.reportType = reportType;
         this.content = content;
     }
 
-    public Report( String id, Order order, ReportType reportType, String content) {
+    public Report( Member reporter,Member reported,String id, Order order, ReportType reportType, String content) {
         super(id);
+        this.reporter = reporter;
+        this.reported = reported;
         this.order = order;
         this.reportType = reportType;
         this.content = content;

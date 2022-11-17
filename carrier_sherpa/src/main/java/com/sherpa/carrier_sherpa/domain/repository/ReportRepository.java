@@ -13,10 +13,13 @@ public interface ReportRepository extends JpaRepository<Report, String> {
 
     Report findByOrderId(Long orderId);
 
-    @Query(value = "select *\n" +
-            "from ( select r.*,traveler_id from sherpa.report as r\n" +
-            "left join sherpa.orders as o\n" +
-            "on r.order_id = o.id ) as reported\n" +
-            "where :reported_id = reported.traveler_id",nativeQuery = true)
-    List<Report> findByReported(@Param("reported_id") String reportedId);
+    @Query(value ="select * " +
+            "from report " +
+            "where :reporter = report.reporter_id",nativeQuery = true)
+    List<Report> findByReporter(@Param("reporter") String reporter);
+
+    @Query(value ="select * " +
+            "from report as r " +
+            "WHERE :reported =r.reported_id",nativeQuery = true)
+    List<Report> findByReported(@Param("reported") String reported);
 }
