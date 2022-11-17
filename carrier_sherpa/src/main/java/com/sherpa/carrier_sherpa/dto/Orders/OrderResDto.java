@@ -4,6 +4,7 @@ import com.sherpa.carrier_sherpa.domain.entity.Luggage;
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
 import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
+import com.sherpa.carrier_sherpa.dto.type.Address;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.w3c.dom.stylesheets.LinkStyle;
@@ -19,18 +20,26 @@ public class OrderResDto {
     private String delieverId;
     private LuggageStatus status;
 
+    private Address start;
+
+    private Address end;
+
     private List<LuggageResDto> luggages;
 
     public OrderResDto(
             String orderId,
             String travelerId,
             String delieverId,
+            Address start,
+            Address end,
             LuggageStatus status,
             List<LuggageResDto> luggages) {
         this.orderId = orderId;
         this.travelerId = travelerId;
         this.delieverId = delieverId;
         this.status = status;
+        this.start = start;
+        this.end = end;
         this.luggages = luggages;
     }
 
@@ -44,14 +53,18 @@ public class OrderResDto {
                     order.getId(),
                     order.getTraveler().getId(),
                    "None",
-                    LuggageStatus.ACCEPT,
+                    new Address(order.getStart_lat(), order.getStart_lng()),
+                    new Address(order.getEnd_lat(),order.getEnd_lng()),
+                    order.getStatus(),
                     luggages);
         }
         return new OrderResDto(
                 order.getId(),
                 order.getTraveler().getId(),
                 String.valueOf(order.getDeliever().getId()),
-                LuggageStatus.ACCEPT,
+                new Address(order.getStart_lat(), order.getStart_lng()),
+                new Address(order.getEnd_lat(),order.getEnd_lng()),
+                order.getStatus(),
                 luggages);
     }
 }
