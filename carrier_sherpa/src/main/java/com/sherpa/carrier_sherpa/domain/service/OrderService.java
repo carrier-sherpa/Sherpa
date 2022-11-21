@@ -42,7 +42,7 @@ public class OrderService {
         return new OrderResDto().of(order,luggages);
     }
 
-    public List<LuggageResDto> findByMemberId(String memberId){
+    public List<OrderResDto> findByMemberId(String memberId){
         Member loginMember = memberRepository.findById(memberId).orElseThrow(
                 ()-> new BaseException(
                         ErrorCode.NOT_USER,
@@ -51,28 +51,30 @@ public class OrderService {
         );
 
         // 한 사람이 여러 개의 order를 가질 수 없는 것을 전제. 만약 이럴 경우 오류 날 것.
-        Optional<Order> order = orderRepository.findById(memberId);
-        List<LuggageResDto> luggages = luggageService.findByOrderId(order.get().getId());
+        List<Order> orders = orderRepository.findByTravelerId(memberId);
+
+        return orders.stream()
+                .map(order -> OrderResDto.of(order,luggageService.findByOrderId(order.getId()) ))
+                .collect(Collectors.toList());
         // NPE 발생 가능 , 오류 처리 필요할지도?
         // NPE 발생 X -> 아무것도 없는 애들도 그냥 빈 리스트로 출력
 
-        return luggages;
     }
 
     public List<OrderResDto> findByDistance(String memberId, DelieverReqDto delieverReqDto){
         List<Order> inStart = orderRepository.findAll()
                 .stream()
                 .filter(order ->
-                        getDistance(order.getStart_lat(),order.getStart_lng(), delieverReqDto.getStart().getLat(), delieverReqDto.getStart().getLng())<1.0001
-                        || getDistance(order.getStart_lat(),order.getStart_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
+                        DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), delieverReqDto.getStart().getLat(), delieverReqDto.getStart().getLng())<1.0001
+                        || DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
                 .collect(Collectors.toList());
 
 
         List<Order> inEnd = inStart
                 .stream()
                 .filter(order ->
-                        getDistance(order.getEnd_lat(),order.getEnd_lng(), delieverReqDto.getEnd().getLat(), delieverReqDto.getEnd().getLng())<1.0001
-                        || getDistance(order.getEnd_lat(),order.getEnd_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
+                        DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), delieverReqDto.getEnd().getLat(), delieverReqDto.getEnd().getLng())<1.0001
+                        || DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
                 .collect(Collectors.toList());
         // Order -> OrderResDto( Order, List<Luggage> by OrderId )
 
@@ -80,24 +82,6 @@ public class OrderService {
                 .stream()
                 .map(order -> OrderResDto.of(order,luggageService.findByOrderId(order.getId()) ))
                 .collect(Collectors.toList());
-    }
-
-    public static Double getDistance(Double lat, Double lnt, Double lat2, Double lnt2) {
-        double theta = lnt - lnt2;
-        double dist = Math.sin(deg2rad(lat))* Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat))*Math.cos(deg2rad(lat2))*Math.cos(deg2rad(theta));
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
-        dist = dist * 60*1.1515*1609.344;
-
-        return dist / 1000;
-    }
-    //10진수를 radian(라디안)으로 변환
-    private static double deg2rad(double deg){
-        return (deg * Math.PI/180.0);
-    }
-    //radian(라디안)을 10진수로 변환
-    private static double rad2deg(double rad){
-        return (rad * 180 / Math.PI);
     }
 
     public OrderResDto create(String travelerId, OrderReqDto orderReqDto) {
