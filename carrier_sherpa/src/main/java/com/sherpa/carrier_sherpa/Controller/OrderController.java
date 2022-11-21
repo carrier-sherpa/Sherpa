@@ -32,7 +32,7 @@ public class OrderController {
     }
 
     @GetMapping("/memberId")
-    public List<LuggageResDto> findByMemberId(
+    public List<OrderResDto> findByMemberId(
             HttpServletRequest httpServletRequest
     ){
         HttpSession httpSession = httpServletRequest.getSession();
