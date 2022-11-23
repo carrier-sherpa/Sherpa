@@ -65,7 +65,7 @@ public class OrderController {
         return orderService.create(memberResDto.getId(),orderReqDto);
     }
 
-    @PostMapping("/{orderid}")
+    @PostMapping("acceptOrder/{orderid}")
     public OrderResDto accept(
             HttpServletRequest httpServletRequest,
             @PathVariable("orderid") String orderId
@@ -74,7 +74,7 @@ public class OrderController {
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
         return orderService.accept(memberResDto.getId(),orderId);
     }
-    @PatchMapping("/{id}")
+    @PatchMapping("updateOrder/{id}")
     public OrderResDto update(
             HttpServletRequest httpServletRequest,
             @RequestBody OrderReqDto orderReqDto,
@@ -83,6 +83,16 @@ public class OrderController {
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
         return orderService.update(memberResDto.getId(),orderId, orderReqDto);
+    }
+
+    @PatchMapping("closeOrder/{id}")
+    public OrderResDto close(
+            HttpServletRequest httpServletRequest,
+            @PathVariable("id") String orderId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return orderService.close(memberResDto.getId(), orderId);
     }
 
     @DeleteMapping("/{orderId}")

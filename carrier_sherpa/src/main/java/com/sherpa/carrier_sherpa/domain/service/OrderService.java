@@ -61,20 +61,20 @@ public class OrderService {
 
     }
 
-    public List<OrderResDto> findByDistance(String memberId, DelieverReqDto delieverReqDto){
+    public List<OrderResDto> findByDistance(String memberId, DelieverReqDto memberReqDto){
         List<Order> inStart = orderRepository.findAll()
                 .stream()
                 .filter(order ->
-                        DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), delieverReqDto.getStart().getLat(), delieverReqDto.getStart().getLng())<1.0001
-                        || DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
+                        DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), memberReqDto.getStart().getLat(), memberReqDto.getStart().getLng())<1.0001
+                        || DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), (memberReqDto.getStart().getLat()+memberReqDto.getEnd().getLat())/(double)2, (memberReqDto.getStart().getLng()+memberReqDto.getEnd().getLng())/(double)2)<1.0001)
                 .collect(Collectors.toList());
 
 
         List<Order> inEnd = inStart
                 .stream()
                 .filter(order ->
-                        DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), delieverReqDto.getEnd().getLat(), delieverReqDto.getEnd().getLng())<1.0001
-                        || DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), (delieverReqDto.getStart().getLat()+delieverReqDto.getEnd().getLat())/(double)2, (delieverReqDto.getStart().getLng()+delieverReqDto.getEnd().getLng())/(double)2)<1.0001)
+                        DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), memberReqDto.getEnd().getLat(), memberReqDto.getEnd().getLng())<1.0001
+                        || DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), (memberReqDto.getStart().getLat()+memberReqDto.getEnd().getLat())/(double)2, (memberReqDto.getStart().getLng()+memberReqDto.getEnd().getLng())/(double)2)<1.0001)
                 .collect(Collectors.toList());
         // Order -> OrderResDto( Order, List<Luggage> by OrderId )
 
@@ -117,21 +117,21 @@ public class OrderService {
 
     }
 
-    public OrderResDto accept(String delieverId, String orderId){
+    public OrderResDto accept(String memberId, String orderId){
         Order order = orderRepository.findById(orderId).orElseThrow(
                 ()->new BaseException(
                         ErrorCode.NOT_ORDER,
                         "해당하는 서비스가 존재하지 않습니다."
                 )
         );
-        Member loginMember = memberRepository.findById(delieverId).orElseThrow(
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
                 ()->new BaseException(
                         ErrorCode.NOT_USER,
                         "해당하는 유저가 존재하지 않습니다."
                 )
         );
 
-        if (order.getTraveler().getId().equals(delieverId)){
+        if (order.getTraveler().getId().equals(memberId)){
             throw new BaseException(
                     ErrorCode.NOT_AUTHORIZATION,
                     "Traveler와 Deliever가 동일합니다."
@@ -195,6 +195,43 @@ public class OrderService {
 //        return new OrderResDto().of(order); OrderResDto NPE 처리 필요
         return null;
     }
+
+    public OrderResDto close(String memberId, String orderId){
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_ORDER,
+                        "해당하는 서비스가 존재하지 않습니다."
+                )
+        );
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "해당하는 유저가 존재하지 않습니다."
+                )
+        );
+
+        if (!order.getDeliever().getId().equals(memberId)){
+            throw new BaseException(
+                    ErrorCode.NOT_AUTHORIZATION,
+                    "해당 서비스에 대한 권한이 없습니다."
+            );
+        }
+
+        if (!(order.getStatus()==LuggageStatus.ACCEPT)){
+            throw new BaseException(
+                    ErrorCode.NOT_AUTHORIZATION,
+                    "해당 서비스가 배송 상태가 아닙니다."
+            );
+        }
+        order.close(loginMember);
+        orderRepository.save(order);
+        // 유저에게 푸쉬메시지 날라가는 API도 필요할 듯
+
+        List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
+
+        return new OrderResDto().of(order,luggages);
+    }
+
 
     public OrderResDto delete(String memberId, String orderId) {
         Member loginMember = memberRepository.findById(memberId).orElseThrow(

@@ -114,4 +114,11 @@ public class Order  extends BaseEntity{
         this.deliever = deliever;
         this.status = LuggageStatus.ACCEPT;
     }
+
+    public void close(
+            Member deliever
+    ){
+        this.deliever = deliever;
+        this.status = LuggageStatus.ARRIVE;
+    }
 }
