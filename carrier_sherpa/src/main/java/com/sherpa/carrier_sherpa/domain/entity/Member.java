@@ -45,7 +45,8 @@ public class Member extends BaseEntity{
     }
 
     public void setTripEnergy(int tripScore){
-        this.tripEnergy += (tripScore - 3) * Math.log(tripScore);
+        int travel_n = 5;
+        this.tripEnergy += (tripScore - 3) * Math.log(travel_n);
     }
 
 }

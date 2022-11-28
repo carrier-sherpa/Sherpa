@@ -60,7 +60,6 @@ public class ReportService {
             );
         }
 
-
         // Order와 전혀 관계없는 member를 신고 가능 validation 처리 필요
         if (!reported.equals(order.getDeliever().getId()) && !reported.equals(order.getTraveler().getId())){
             throw new BaseException(

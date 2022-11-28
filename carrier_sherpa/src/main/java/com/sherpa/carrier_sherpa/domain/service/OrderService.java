@@ -196,7 +196,7 @@ public class OrderService {
         return null;
     }
 
-    public OrderResDto close(String memberId, String orderId){
+    public OrderResDto end(String memberId, String orderId){
         Order order = orderRepository.findById(orderId).orElseThrow(
                 ()->new BaseException(
                         ErrorCode.NOT_ORDER,
@@ -223,16 +223,66 @@ public class OrderService {
                     "해당 서비스가 배송 상태가 아닙니다."
             );
         }
-        order.close(loginMember);
+        order.close(loginMember,LuggageStatus.ARRIVE);
         orderRepository.save(order);
-        // 유저에게 푸쉬메시지 날라가는 API도 필요할 듯
 
         List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
 
         return new OrderResDto().of(order,luggages);
     }
 
+    @Transactional
+    public OrderResDto close(String memberId, String orderId){
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_ORDER,
+                        "해당하는 서비스가 존재하지 않습니다."
+                )
+        );
 
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "해당하는 유저가 존재하지 않습니다."
+                )
+        );
+
+        if ((order.getStatus()==LuggageStatus.DELIVER
+                || order.getStatus()==LuggageStatus.ARRIVE
+                || order.getStatus()==LuggageStatus.CANCEL)){
+            throw new BaseException(
+                    ErrorCode.NOT_AUTHORIZATION,
+                    "해당 서비스를 취소할 수 없습니다."
+            );
+        }
+
+//        List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
+
+        String travelerId = order.getTraveler().getId();
+
+        if (memberId.equals(travelerId)) {
+            orderRepository.delete(order);
+            if ( order.getStatus().equals(LuggageStatus.ACCEPT)){
+                loginMember.setTripEnergy(0);
+                // - 상대방에게 푸시메시지!!
+            }
+            return new OrderResDto();
+        }
+
+        List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
+
+        // Only Deliever만 넘어옴.
+        order.close(null, LuggageStatus.REGISTER);
+        loginMember.setTripEnergy(0); // - Travel Engergy 감소 및 제재
+        // - 상대방에게 푸시메시지!!
+        orderRepository.save(order);
+        memberRepository.save(loginMember);
+        // 유저에게 푸쉬메시지 날라가는 API도 필요할 듯
+
+        return new OrderResDto().of(order,luggages);
+    }
+
+    @Transactional
     public OrderResDto delete(String memberId, String orderId) {
         Member loginMember = memberRepository.findById(memberId).orElseThrow(
                 ()->new BaseException(
@@ -255,5 +305,7 @@ public class OrderService {
         orderRepository.delete(order);
 
         return null;
+
+        // 해당 Order에 Report가 있으면 delete가 안 됨.
     }
 }

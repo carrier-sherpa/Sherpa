@@ -85,6 +85,18 @@ public class OrderController {
         return orderService.update(memberResDto.getId(),orderId, orderReqDto);
     }
 
+    // Order를 Delieve 완료.
+    @PatchMapping("endOrder/{id}")
+    public OrderResDto end(
+            HttpServletRequest httpServletRequest,
+            @PathVariable("id") String orderId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return orderService.end(memberResDto.getId(), orderId);
+    }
+
+    // Order를 수락한 뒤 취소
     @PatchMapping("closeOrder/{id}")
     public OrderResDto close(
             HttpServletRequest httpServletRequest,
@@ -95,7 +107,7 @@ public class OrderController {
         return orderService.close(memberResDto.getId(), orderId);
     }
 
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("deleteOrder/{orderId}")
     public OrderResDto delete(
             HttpServletRequest httpServletRequestl,
             @PathVariable("orderId") String orderId
