@@ -105,6 +105,20 @@ public class ReportService {
             String memberId,
             String reportedId
     ){
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "존재하지 않는 유저입니다."
+                )
+        );
+
+        Member reportedMember = memberRepository.findById(reportedId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "존재하지 않는 유저입니다."
+                )
+        );
+
         return reportRepository.findByReported(reportedId).stream()
                 .map(report -> new ReportResDto().of(report))
                 .collect(Collectors.toList());
@@ -113,10 +127,24 @@ public class ReportService {
             String memberId,
             String reporterId
     ){
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "존재하지 않는 유저입니다."
+                )
+        );
+
+        Member reportedMember = memberRepository.findById(reporterId).orElseThrow(
+                ()->new BaseException(
+                        ErrorCode.NOT_USER,
+                        "존재하지 않는 유저입니다."
+                )
+        );
+
 
         return reportRepository.findByReporter(reporterId).stream()
                 .map(report -> new ReportResDto().of(report))
                 .collect(Collectors.toList());
-
     }
+
 }

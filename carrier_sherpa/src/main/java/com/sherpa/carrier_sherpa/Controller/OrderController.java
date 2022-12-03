@@ -109,11 +109,13 @@ public class OrderController {
 
     @DeleteMapping("deleteOrder/{orderId}")
     public OrderResDto delete(
-            HttpServletRequest httpServletRequestl,
+            HttpServletRequest httpServletRequest,
             @PathVariable("orderId") String orderId
     ){
-        HttpSession httpSession = httpServletRequestl.getSession();
+        HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
         return orderService.delete(memberResDto.getId(),orderId);
     }
+
+
 }
