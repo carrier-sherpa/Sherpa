@@ -15,11 +15,4 @@ class MemberTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @Test
-    void test(){
-        Member member = new Member( "test", "test", MemberRole.USER);
-        memberRepository.save(member);
-        System.out.println(memberRepository.findByEmail("email").get().getPassword());
-    }
-
 }

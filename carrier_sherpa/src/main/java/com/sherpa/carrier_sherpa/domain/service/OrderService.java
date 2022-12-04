@@ -13,10 +13,12 @@ import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
 import com.sherpa.carrier_sherpa.dto.Orders.DelieverReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderResDto;
+import com.sherpa.carrier_sherpa.dto.type.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,23 +64,28 @@ public class OrderService {
     }
 
     public List<OrderResDto> findByDistance(String memberId, DelieverReqDto memberReqDto){
-        List<Order> inStart = orderRepository.findAll()
-                .stream()
-                .filter(order ->
-                        DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), memberReqDto.getStart().getLat(), memberReqDto.getStart().getLng())<1.0001
-                        || DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), (memberReqDto.getStart().getLat()+memberReqDto.getEnd().getLat())/(double)2, (memberReqDto.getStart().getLng()+memberReqDto.getEnd().getLng())/(double)2)<1.0001)
-                .collect(Collectors.toList());
+//        List<Order> inStart = orderRepository.findAll()
+//                .stream()
+//                .filter(order ->
+//                        DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), memberReqDto.getStart().getLat(), memberReqDto.getStart().getLng())<1.0001
+//                        || DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), (memberReqDto.getStart().getLat()+memberReqDto.getEnd().getLat())/(double)2, (memberReqDto.getStart().getLng()+memberReqDto.getEnd().getLng())/(double)2)<1.0001)
+//                .collect(Collectors.toList());
 
+        List<Order> orders = new ArrayList<>();
+        List<Order> inStart = orderRepository.findAll();
+        for (Order order : inStart) {
+            Address orderStart = new Address(order.getStart_lat(), order.getStart_lng());
+            Address orderEnd = new Address(order.getEnd_lat(), order.getEnd_lng());
 
-        List<Order> inEnd = inStart
-                .stream()
-                .filter(order ->
-                        DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), memberReqDto.getEnd().getLat(), memberReqDto.getEnd().getLng())<1.0001
-                        || DistanceService.getDistance(order.getEnd_lat(),order.getEnd_lng(), (memberReqDto.getStart().getLat()+memberReqDto.getEnd().getLat())/(double)2, (memberReqDto.getStart().getLng()+memberReqDto.getEnd().getLng())/(double)2)<1.0001)
-                .collect(Collectors.toList());
-        // Order -> OrderResDto( Order, List<Luggage> by OrderId )
+            if ( ( DistanceService.vectorCross(DistanceService.vector(orderStart,orderEnd),DistanceService.vector(memberReqDto.getStart(),memberReqDto.getEnd()))) &&
+                    (DistanceService.orthogonalDistance(orderStart,memberReqDto.getStart(),memberReqDto.getEnd())<=0.5 &&
+                     DistanceService.orthogonalDistance(orderEnd,memberReqDto.getStart(),memberReqDto.getEnd())<=0.5) &&
+                    (DistanceService.vectorCross(DistanceService.vector(memberReqDto.getStart(),orderStart),DistanceService.vector(memberReqDto.getStart(),memberReqDto.getEnd())))){
+                orders.add(order);
+            }
+        }
 
-        return inEnd
+        return orders
                 .stream()
                 .map(order -> OrderResDto.of(order,luggageService.findByOrderId(order.getId()) ))
                 .collect(Collectors.toList());
