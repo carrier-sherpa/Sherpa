@@ -7,6 +7,7 @@ import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
 import com.sherpa.carrier_sherpa.dto.Orders.DelieverReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderReqDto;
 import com.sherpa.carrier_sherpa.dto.Orders.OrderResDto;
+import com.sherpa.carrier_sherpa.dto.type.Address;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,7 +63,24 @@ public class OrderController {
     ){
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-        return orderService.create(memberResDto.getId(),orderReqDto);
+        return orderService.create(memberResDto.getId(), orderReqDto);
+    }
+
+    @GetMapping("/isAddress")
+    public String checkTerminal(
+            @RequestParam("startLat") Double startLat,
+            @RequestParam("startLng") Double startLng,
+            @RequestParam("endLat") Double endLat,
+            @RequestParam("endLng") Double endLng
+    ){
+        return orderService.checkTerminal(
+                startLat,
+                startLng,
+                endLat,
+                endLng);
+        // 두 쪽 다 터미널에 있는 경우는 오류 날 수 있다.
+
+        // if none 이면 프론트에서 cafe 관련 정보 삭제.
     }
 
     @PostMapping("acceptOrder/{orderid}")

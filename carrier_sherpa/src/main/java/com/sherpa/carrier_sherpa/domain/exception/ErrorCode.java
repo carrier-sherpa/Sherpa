@@ -10,7 +10,8 @@ public enum ErrorCode {
     NOT_ORDER(4003),
     NOT_REPORT(4004),
     INVALID_PASSWORD_FORMAT(4005),
-    NULL_VALUE(4006)
+    NULL_VALUE(4006),
+    INVALID_COMMAND(4007)
     ;
 
     private int code;

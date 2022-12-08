@@ -20,4 +20,5 @@ public class OrderReqDto {
     private Time endTime;
     private String luggageImgUrl;
     private List<LuggageReqDto> luggages;
+    private String cafeId;
 }

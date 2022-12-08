@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CafeResDto {
+    private String id;
     private String name;
     private Address address;
 
@@ -18,11 +19,13 @@ public class CafeResDto {
     private String content;
 
     public CafeResDto(
+            String id,
             String name,
             Address address,
             int restNum,
             String content
     ){
+        this.id = id;
         this.name = name;
         this.address = address;
         this.restNum = restNum;
@@ -31,6 +34,7 @@ public class CafeResDto {
     public static CafeResDto of(Cafe cafe){
 
         return new CafeResDto(
+                cafe.getId(),
                 cafe.getCafeName(),
                 new Address(cafe.getLat(), cafe.getLng()),
                 cafe.getLuggageNum(),

@@ -31,4 +31,23 @@ public class CafeController {
         return cafeService.findByDistance(memberResDto.getId(), lat, lng);
     }
 
+    @GetMapping("/cafeId")
+    public CafeResDto findById(
+            HttpServletRequest httpServletRequest,
+            @RequestParam("cafeId") String cafeId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return cafeService.findById(memberResDto.getId(), cafeId);
+    }
+
+//    @PostMapping()
+//    public CafeResDto entrust(
+//            HttpServletRequest httpServletRequest,
+//            @RequestParam("cafeId") String cafeId
+//    ){
+//        HttpSession httpSession = httpServletRequest.getSession();
+//        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+//        return cafeService.entrust(memberResDto.getId(),cafeId);
+//    }
 }

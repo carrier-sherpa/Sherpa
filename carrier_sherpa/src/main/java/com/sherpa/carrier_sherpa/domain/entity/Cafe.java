@@ -33,4 +33,8 @@ public class Cafe extends BaseEntity{
     private int luggageNum;
 
     private String content;
+
+    public void entrust(int luggageNum){
+        this.luggageNum -= luggageNum;
+    }
 }

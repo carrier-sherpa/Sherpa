@@ -1,13 +1,14 @@
 package com.sherpa.carrier_sherpa.domain.service;
 
-import com.sherpa.carrier_sherpa.domain.entity.Luggage;
-import com.sherpa.carrier_sherpa.domain.entity.Member;
-import com.sherpa.carrier_sherpa.domain.entity.Order;
+import com.sherpa.carrier_sherpa.domain.entity.*;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
 import com.sherpa.carrier_sherpa.domain.exception.BaseException;
 import com.sherpa.carrier_sherpa.domain.exception.ErrorCode;
+import com.sherpa.carrier_sherpa.domain.repository.CafeRepository;
 import com.sherpa.carrier_sherpa.domain.repository.MemberRepository;
 import com.sherpa.carrier_sherpa.domain.repository.OrderRepository;
+import com.sherpa.carrier_sherpa.domain.repository.TerminalRepository;
+import com.sherpa.carrier_sherpa.dto.Cafe.TerminalDto;
 import com.sherpa.carrier_sherpa.dto.Luggage.LuggageReqDto;
 import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
 import com.sherpa.carrier_sherpa.dto.Orders.DelieverReqDto;
@@ -31,6 +32,8 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
     private final LuggageService luggageService;
+    private final CafeRepository cafeRepository;
+    private final TerminalRepository terminalRepository;
 
     public OrderResDto findById(String memberId, String orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(
@@ -91,6 +94,31 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    public String checkTerminal(
+            Double startLat,
+            Double startLng,
+            Double endLat,
+            Double endLng
+    ){
+        // 터미널 유효성 검사
+        List<TerminalDto> terminals = terminalRepository.findAll().stream()
+                .map(terminal -> new TerminalDto(terminal))
+                .collect(Collectors.toList());
+        for( TerminalDto terminal :terminals){
+            Double terminalLat = terminal.getLat();
+            Double terminalLng = terminal.getLng();
+            if (DistanceService.getDistance(startLat,startLng,terminalLat,terminalLng)<1.001 ){
+                Address[] addresses = {new Address(), new Address(endLat, endLng)};
+                return "start";
+            }
+            if (DistanceService.getDistance(endLat,endLng,terminalLat,terminalLng)<1.001){
+                Address[] addresses = {new Address(startLat,startLng), new Address()};
+                return "end";
+            }
+        }
+        Address[] addresses = {new Address(startLat,startLng), new Address(endLat, endLng)};
+        return "none";
+    }
     public OrderResDto create(String travelerId, OrderReqDto orderReqDto) {
         Member loginMember = memberRepository.findById(travelerId).orElseThrow(
                 ()->new BaseException(
@@ -120,6 +148,19 @@ public class OrderService {
         }
         List<LuggageResDto> luggages = luggageService.findByOrderId(orderId);
 
+        if ( !(orderReqDto.getCafeId()==null)){
+            Optional<Cafe> cafe = cafeRepository.findById(orderReqDto.getCafeId());
+            cafe.get().entrust(luggages.size());
+            if (cafe.get().getLuggageNum()<0){
+                cafe.get().entrust(-luggages.size());
+                throw new BaseException(
+                        ErrorCode.INVALID_COMMAND,
+                        "보관 가능한 짐보다 많은 짐을 보관할 수 없습니다."
+                );
+            }
+
+            cafeRepository.save(cafe.get());
+        }
         return new OrderResDto().of(order,luggages);
 
     }
@@ -138,12 +179,12 @@ public class OrderService {
                 )
         );
 
-        if (order.getTraveler().getId().equals(memberId)){
-            throw new BaseException(
-                    ErrorCode.NOT_AUTHORIZATION,
-                    "Traveler와 Deliever가 동일합니다."
-            );
-        }
+//        if (order.getTraveler().getId().equals(memberId)){
+//            throw new BaseException(
+//                    ErrorCode.NOT_AUTHORIZATION,
+//                    "Traveler와 Deliever가 동일합니다."
+//            );
+//        }
 
         if (order.getStatus()==LuggageStatus.ACCEPT){
             throw new BaseException(
