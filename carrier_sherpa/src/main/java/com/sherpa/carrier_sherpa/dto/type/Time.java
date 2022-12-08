@@ -13,7 +13,11 @@ public class Time {
         this.hour = hour;
         this.minute = minute;
     }
-    public String hourminuteFormat(String hour, String minute) {
-        return hour + ":" + minute;
+
+    public Time stringToTime(String time) {
+        String[] hourminute = time.split(":");
+        this.hour = hourminute[0];
+        this.minute = hourminute[1];
+        return this;
     }
 }
