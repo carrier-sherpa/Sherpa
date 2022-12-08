@@ -21,7 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
 
     @Query(value ="select * " +
             "from orders as r " +
-            "WHERE :deliever = r.deliever_id",nativeQuery = true)
-    List<Order> findByDelieverId(@Param("deliever") String deliever);
+            "WHERE :deliver = r.deliever_id",nativeQuery = true)
+    List<Order> findByDeliverId(@Param("deliver") String deliver);
 
 }

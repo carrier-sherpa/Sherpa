@@ -47,7 +47,7 @@ public class OrderService {
         return new OrderResDto().of(order,luggages);
     }
 
-    public List<OrderResDto> findByMemberId(String memberId){
+    public List<OrderResDto> findByTravelerId(String memberId){
         Member loginMember = memberRepository.findById(memberId).orElseThrow(
                 ()-> new BaseException(
                         ErrorCode.NOT_USER,
@@ -66,13 +66,26 @@ public class OrderService {
 
     }
 
+    public List<OrderResDto> findByDeliverId(String memberId){
+        Member loginMember = memberRepository.findById(memberId).orElseThrow(
+                ()-> new BaseException(
+                        ErrorCode.NOT_USER,
+                        "해당하는 유저가 존재하지 않습니다."
+                )
+        );
+
+        // 한 사람이 여러 개의 order를 가질 수 없는 것을 전제. 만약 이럴 경우 오류 날 것.
+        List<Order> orders = orderRepository.findByDeliverId(memberId);
+
+        return orders.stream()
+                .map(order -> OrderResDto.of(order,luggageService.findByOrderId(order.getId()) ))
+                .collect(Collectors.toList());
+        // NPE 발생 가능 , 오류 처리 필요할지도?
+        // NPE 발생 X -> 아무것도 없는 애들도 그냥 빈 리스트로 출력
+
+    }
+
     public List<OrderResDto> findByDistance(String memberId, DelieverReqDto memberReqDto){
-//        List<Order> inStart = orderRepository.findAll()
-//                .stream()
-//                .filter(order ->
-//                        DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), memberReqDto.getStart().getLat(), memberReqDto.getStart().getLng())<1.0001
-//                        || DistanceService.getDistance(order.getStart_lat(),order.getStart_lng(), (memberReqDto.getStart().getLat()+memberReqDto.getEnd().getLat())/(double)2, (memberReqDto.getStart().getLng()+memberReqDto.getEnd().getLng())/(double)2)<1.0001)
-//                .collect(Collectors.toList());
 
         List<Order> orders = new ArrayList<>();
         List<Order> inStart = orderRepository.findAll();

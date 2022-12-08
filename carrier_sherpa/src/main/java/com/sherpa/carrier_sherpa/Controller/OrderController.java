@@ -32,13 +32,22 @@ public class OrderController {
         return orderService.findById(memberResDto.getId(),orderId);
     }
 
-    @GetMapping("/memberId")
-    public List<OrderResDto> findByMemberId(
+    @GetMapping("/travelerId")
+    public List<OrderResDto> findByTravelerId(
             HttpServletRequest httpServletRequest
     ){
         HttpSession httpSession = httpServletRequest.getSession();
         MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
-        return orderService.findByMemberId(memberResDto.getId());
+        return orderService.findByTravelerId(memberResDto.getId());
+    }
+
+    @GetMapping("/deliverId")
+    public List<OrderResDto> findByDeliverId(
+            HttpServletRequest httpServletRequest
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return orderService.findByDeliverId(memberResDto.getId());
     }
 
     @GetMapping("/distance")
