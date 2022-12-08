@@ -31,7 +31,7 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    @GetMapping("/reportId/{Id}")
+    @GetMapping("/reportId/{id}")
     public ReportResDto findByReportId(
             HttpServletRequest httpServletRequest,
             @RequestParam ("id") String reportId
