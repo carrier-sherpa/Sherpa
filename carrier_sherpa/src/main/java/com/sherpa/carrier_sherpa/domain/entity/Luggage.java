@@ -3,6 +3,11 @@ package com.sherpa.carrier_sherpa.domain.entity;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
 import com.sherpa.carrier_sherpa.domain.enums.LuggageType;
 import com.sherpa.carrier_sherpa.domain.enums.MemberRole;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -43,6 +48,14 @@ public class Luggage  extends BaseEntity{
     public Luggage(
             Order order,
             LuggageType size,
+            LuggageStatus status
+    ){
+        this.member = member;
+        this.start = start;
+        this.destination = destination;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.luggage_image_url = luggage_image_url;
             int num
     ) {
         this.order = order;

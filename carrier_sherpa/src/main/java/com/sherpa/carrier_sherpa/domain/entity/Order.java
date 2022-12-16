@@ -53,6 +53,12 @@ public class Order  extends BaseEntity{
     private String start_detail;
     private String end_detail;
 
+
+
+    private double lat;
+
+    private double lon;
+
     @Builder
     public Order(
             Member traveler,

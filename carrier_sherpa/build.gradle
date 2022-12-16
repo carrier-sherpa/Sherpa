@@ -31,10 +31,25 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
+	//websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:sockjs-client:1.5.1'
+	implementation 'org.webjars:stomp-websocket:2.3.4'
+
+	//view
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+	implementation 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.webjars.bower:bootstrap:5.2.2'
+	implementation 'org.webjars.bower:vue:2.6.14'
+	implementation 'org.webjars.bower:axios:0.21.1'
+	implementation 'com.google.code.gson:gson:2.10'
+
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+
 }
 
 tasks.named('test') {
