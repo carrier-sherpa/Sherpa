@@ -4,7 +4,7 @@ An app that moves travelers' luggage on their behalf
 * Spring boot : 2.7.4
 * MySql : 8.0
 
-해당 프로젝트의 서버는 AWS RDS를 데이터베이스 서버로 이용하였으며 JAR 빌드를 통해 AWS Elastic Beanstalk를 이용하여 서버를 백엔드 서버를 배포하였습니다.
+해당 프로젝트의 서버는 AWS RDS를 데이터베이스 서버로 이용하였으며 JAR 빌드를 통해 AWS Elastic Beanstalk를 이용하여 백엔드 서버를 배포하였습니다.
 
 ### 📜 Sherpa 백엔드 API 명세서
 
