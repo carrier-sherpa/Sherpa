@@ -1,8 +1,7 @@
 package com.sherpa.carrier_sherpa.domain.entity;
 
 import com.sherpa.carrier_sherpa.domain.enums.MemberRole;
-import com.sherpa.carrier_sherpa.dto.MemberCreateReqDto;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberCreateReqDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,13 +14,6 @@ import javax.persistence.*;
 @Table(name = "member")
 @Entity
 public class Member extends BaseEntity{
-
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "member_id")
-//    private Long id;
-
     @Column(name = "email",unique = true)
     private String email;
 
@@ -31,22 +23,30 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
+    private float tripEnergy;
+
+    private int delieverTime;
     @Builder
-    public Member(String email, String password, MemberRole role) {
+    public Member(String email, String password, MemberRole role, float tripEnergy, int delieverTime) {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.tripEnergy = tripEnergy;
+        this.delieverTime = delieverTime;
     }
 
-    public Member(String id,String email, String password, MemberRole role) {
+    public Member(String id,String email, String password, MemberRole role, float tripEnergy, int delieverTime) {
         super(id);
         this.email = email;
         this.password = password;
         this.role = role;
+        this.tripEnergy = tripEnergy;
+        this.delieverTime = delieverTime;
     }
 
-    public Member create(MemberCreateReqDto memberCreateReqDto) {
-        return new Member(memberCreateReqDto.getEmail(), memberCreateReqDto.getPassword(), MemberRole.USER);
+    public void setTripEnergy(int tripScore){
+        int travel_n = 5;
+        this.tripEnergy += (tripScore - 3) * Math.log(travel_n);
     }
 
 }

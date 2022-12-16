@@ -1,7 +1,7 @@
 package com.sherpa.carrier_sherpa.domain.service;
 
 import com.sherpa.carrier_sherpa.domain.entity.Member;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

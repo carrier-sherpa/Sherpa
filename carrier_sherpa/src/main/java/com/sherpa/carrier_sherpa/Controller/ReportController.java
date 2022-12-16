@@ -3,57 +3,74 @@ package com.sherpa.carrier_sherpa.Controller;
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.entity.Report;
 import com.sherpa.carrier_sherpa.domain.service.ReportService;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
-import com.sherpa.carrier_sherpa.dto.OrderFormDto;
+import com.sherpa.carrier_sherpa.dto.Luggage.LuggageResDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
+import com.sherpa.carrier_sherpa.dto.Orders.OrderFormDto;
+import com.sherpa.carrier_sherpa.dto.Orders.OrderReqDto;
+import com.sherpa.carrier_sherpa.dto.Orders.OrderResDto;
+import com.sherpa.carrier_sherpa.dto.Report.ReportReqDto;
+import com.sherpa.carrier_sherpa.dto.Report.ReportResDto;
 import com.sherpa.carrier_sherpa.dto.ReportFormDto;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/reports")
-@Controller
+@RestController
 public class ReportController {
 
     private final ReportService reportService;
 
-    @GetMapping(value = "/new")
-    public String reportForm(Model model) {
-        model.addAttribute("reportFormDto", new MemberFormDto());
-        return "report/reportForm";
+    @GetMapping("/reportId/{id}")
+    public ReportResDto findByReportId(
+            HttpServletRequest httpServletRequest,
+            @RequestParam ("id") String reportId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return reportService.findByReportId(memberResDto.getId(),reportId);
     }
 
-    //TODO: url 이렇게 하면 되는지 확인하기
-    @PostMapping(value = "/new")
-    public String reportForm(@Valid ReportFormDto reportFormDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "/";
-        }
-
-        try {
-            //TODO: OrderFormDto 받는 법을 다른 방식으로 해야댈듯
-            Report report = reportService.createReport(reportFormDto, new OrderFormDto());
-            reportService.saveReport(report, new Order());
-        } catch (IllegalStateException e) {
-            //TODO: 에러 알려주는 url로 가야함
-            return "";
-        }
-        return "/";
+    @GetMapping("/reportedId/{id}")
+    public List<ReportResDto> findByReportedId(
+            HttpServletRequest httpServletRequest,
+            @PathVariable ("id") String reportedId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return reportService.findByReportedId(memberResDto.getId(),reportedId);
     }
 
-    @DeleteMapping(value = "/delete/{reportId}")
-    public void deleteReport(@PathVariable Long reportId) {
-        reportService.deleteReport(reportId);
+    @GetMapping("/reporterId/{id}")
+    public List<ReportResDto> findByReporterId(
+            HttpServletRequest httpServletRequest,
+            @PathVariable ("id") String reporterId
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return reportService.findByReporterId(memberResDto.getId(),reporterId);
     }
 
-    @GetMapping(value = "/{reportId}")
-    public void getReportFormDto(@PathVariable Long reportId) {
-        reportService.findReport(reportId);
+    @PostMapping("/{orderId}")
+    public ReportResDto create(
+            HttpServletRequest httpServletRequest,
+            @RequestBody ReportReqDto reportReqDto,
+            @PathVariable("orderId") String orderId,
+            @RequestParam("report") String reported
+    ){
+        HttpSession httpSession = httpServletRequest.getSession();
+        MemberResDto memberResDto = (MemberResDto) httpSession.getAttribute("loginMember");
+        return reportService.create(memberResDto.getId(),reported,orderId,reportReqDto);
     }
 
 }

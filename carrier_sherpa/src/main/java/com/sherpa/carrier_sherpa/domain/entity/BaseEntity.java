@@ -2,7 +2,9 @@ package com.sherpa.carrier_sherpa.domain.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,11 +24,11 @@ public class BaseEntity {
     @Column(name = "id", nullable = false, unique = true)
     private String id;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedBy
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updated;
 

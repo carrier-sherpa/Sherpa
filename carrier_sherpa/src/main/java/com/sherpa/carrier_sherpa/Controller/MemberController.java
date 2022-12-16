@@ -1,13 +1,14 @@
 package com.sherpa.carrier_sherpa.Controller;
 
+
 import com.sherpa.carrier_sherpa.domain.entity.Luggage;
 import com.sherpa.carrier_sherpa.domain.entity.Member;
 import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.service.LuggageService;
 import com.sherpa.carrier_sherpa.domain.service.MemberService;
-import com.sherpa.carrier_sherpa.dto.MemberCreateReqDto;
-import com.sherpa.carrier_sherpa.dto.MemberFormDto;
-import com.sherpa.carrier_sherpa.dto.MemberResDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberCreateReqDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Member.MemberResDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
+
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
 @RequestMapping("/members")
@@ -53,15 +59,6 @@ public class MemberController {
         return loginMember;
     }
 
-    @ResponseBody
-    @GetMapping("/test")
-    public MemberResDto test(
-            HttpServletRequest httpServletRequest) {
-        HttpSession session = httpServletRequest.getSession();
-        MemberFormDto memberFormDto = (MemberFormDto) session.getAttribute("loginMember");
-        return memberService.findByEmail(memberFormDto.getEmail());
-    }
-
     @GetMapping(value = "/near-luggage")
     @ResponseBody
     public String getNearLuggage() {
@@ -69,5 +66,6 @@ public class MemberController {
 
         return luggageListInMaxDistance.toString();
     }
+
 }
 

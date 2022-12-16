@@ -1,8 +1,8 @@
 package com.sherpa.carrier_sherpa.dto;
 
-import com.sherpa.carrier_sherpa.domain.entity.Member;
-import com.sherpa.carrier_sherpa.domain.entity.Order;
 import com.sherpa.carrier_sherpa.domain.enums.ReportType;
+import com.sherpa.carrier_sherpa.dto.Member.MemberFormDto;
+import com.sherpa.carrier_sherpa.dto.Orders.OrderFormDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,9 +1,13 @@
 package com.sherpa.carrier_sherpa.domain.entity;
 
+import com.sherpa.carrier_sherpa.domain.enums.LuggageStatus;
+import com.sherpa.carrier_sherpa.domain.service.LuggageService;
+import com.sherpa.carrier_sherpa.dto.type.Address;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
 
 import javax.persistence.*;
 
@@ -13,26 +17,41 @@ import javax.persistence.*;
 @Entity
 public class Order  extends BaseEntity{
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "order_id")
-//    private Long id;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id", name = "traveler_id")
+    private Member traveler;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "id", name = "sender_id")
-    private Member sender;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(referencedColumnName = "id", name = "deliever_id")
+    private Member deliever;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "id", name = "courier_id")
-    private Member courier;
+    @Column(nullable = false)
+    private String start_time;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "luggage_id")
-    private Luggage luggage;
+    @Column(nullable = false)
+    private String end_time;
 
-    private String start;
+    // 이넘이 위도
+    @Column(nullable = false)
+    private Double start_lat;
 
-    private String goal;
+    //이넘잉 경도
+    @Column(nullable = false)
+    private Double start_lng;
+
+    @Column(nullable = false)
+    private Double end_lat;
+
+    @Column(nullable = false)
+    private Double end_lng;
+
+    private String luggage_image_url;
+
+    @Enumerated(EnumType.STRING)
+    private LuggageStatus status;
+
+    private String start_detail;
+    private String end_detail;
 
 
 
@@ -41,20 +60,89 @@ public class Order  extends BaseEntity{
     private double lon;
 
     @Builder
-    public Order(Member sender, Member courier, Luggage luggage, String start, String goal) {
-        this.sender = sender;
-        this.courier = courier;
-        this.luggage = luggage;
-        this.start = start;
-        this.goal = goal;
+    public Order(
+            Member traveler,
+            Member deliever,
+            String start_time,
+            String end_time,
+            Address start,
+            Address end,
+            String start_detail,
+            String end_detail,
+            String luggage_image_url,
+            LuggageStatus status) {
+        this.traveler = traveler;
+        this.deliever = deliever;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.start_lat = start.getLat();
+        this.start_lng = start.getLng();
+        this.end_lat = end.getLat();
+        this.end_lng = end.getLng();
+        this.start_detail = start_detail;
+        this.end_detail = end_detail;
+        this.luggage_image_url = luggage_image_url;
+        this.status = status;
     }
 
-    public Order(String id, Member sender, Member courier, Luggage luggage, String start, String goal) {
+    public Order(
+            String id,
+            Member traveler,
+            Member deliever,
+            Address start,
+            Address end,
+            String start_detail,
+            String end_detail,
+            String start_time,
+            String end_time,
+            String luggage_image_url,
+            LuggageStatus status) {
         super(id);
-        this.sender = sender;
-        this.courier = courier;
-        this.luggage = luggage;
-        this.start = start;
-        this.goal = goal;
+        this.traveler = traveler;
+        this.deliever = deliever;
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.start_lat = start.getLat();
+        this.start_lng = start.getLng();
+        this.end_lat = end.getLat();
+        this.end_lng = end.getLng();
+        this.start_detail = start_detail;
+        this.end_detail = end_detail;
+        this.luggage_image_url = luggage_image_url;
+        this.status = status;
+    }
+
+    public void update(
+            Address start,
+            Address end,
+            String start_detail,
+            String end_detail,
+            String start_time,
+            String end_time,
+            String luggage_image_url) {
+        this.start_lat = start.getLat();
+        this.start_lng = start.getLng();
+        this.end_lat = end.getLat();
+        this.end_lng = end.getLng();
+        this.start_time = start_time;
+        this.end_time = end_time;
+        this.start_detail = start_detail;
+        this.end_detail = end_detail;
+        this.luggage_image_url = luggage_image_url;
+    }
+
+    public void accept(
+            Member deliever
+    ){
+        this.deliever = deliever;
+        this.status = LuggageStatus.ACCEPT;
+    }
+
+    public void close(
+            Member deliever,
+            LuggageStatus status
+    ){
+        this.deliever = deliever;
+        this.status = status;
     }
 }
