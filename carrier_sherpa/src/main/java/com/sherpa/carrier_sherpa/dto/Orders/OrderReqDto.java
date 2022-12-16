@@ -16,6 +16,8 @@ import java.util.List;
 public class OrderReqDto {
     private Address start;
     private Address end;
+    private String start_detail;
+    private String end_detail;
     private Time startTime;
     private Time endTime;
     private String luggageImgUrl;

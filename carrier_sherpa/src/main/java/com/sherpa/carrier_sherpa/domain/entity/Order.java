@@ -50,7 +50,8 @@ public class Order  extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private LuggageStatus status;
 
-
+    private String start_detail;
+    private String end_detail;
 
     @Builder
     public Order(
@@ -60,6 +61,8 @@ public class Order  extends BaseEntity{
             String end_time,
             Address start,
             Address end,
+            String start_detail,
+            String end_detail,
             String luggage_image_url,
             LuggageStatus status) {
         this.traveler = traveler;
@@ -70,6 +73,8 @@ public class Order  extends BaseEntity{
         this.start_lng = start.getLng();
         this.end_lat = end.getLat();
         this.end_lng = end.getLng();
+        this.start_detail = start_detail;
+        this.end_detail = end_detail;
         this.luggage_image_url = luggage_image_url;
         this.status = status;
     }
@@ -80,6 +85,8 @@ public class Order  extends BaseEntity{
             Member deliever,
             Address start,
             Address end,
+            String start_detail,
+            String end_detail,
             String start_time,
             String end_time,
             String luggage_image_url,
@@ -93,6 +100,8 @@ public class Order  extends BaseEntity{
         this.start_lng = start.getLng();
         this.end_lat = end.getLat();
         this.end_lng = end.getLng();
+        this.start_detail = start_detail;
+        this.end_detail = end_detail;
         this.luggage_image_url = luggage_image_url;
         this.status = status;
     }
@@ -100,11 +109,19 @@ public class Order  extends BaseEntity{
     public void update(
             Address start,
             Address end,
+            String start_detail,
+            String end_detail,
             String start_time,
             String end_time,
             String luggage_image_url) {
+        this.start_lat = start.getLat();
+        this.start_lng = start.getLng();
+        this.end_lat = end.getLat();
+        this.end_lng = end.getLng();
         this.start_time = start_time;
         this.end_time = end_time;
+        this.start_detail = start_detail;
+        this.end_detail = end_detail;
         this.luggage_image_url = luggage_image_url;
     }
 

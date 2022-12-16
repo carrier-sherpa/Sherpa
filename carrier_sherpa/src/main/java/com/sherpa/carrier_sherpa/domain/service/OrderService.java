@@ -90,13 +90,18 @@ public class OrderService {
         List<Order> orders = new ArrayList<>();
         List<Order> inStart = orderRepository.findAll();
         for (Order order : inStart) {
+//            System.out.println(order.getStatus().equals(LuggageStatus.REGISTER));
+//            if ( !order.getStatus().equals(LuggageStatus.REGISTER)){
+//                continue;
+//            }
             Address orderStart = new Address(order.getStart_lat(), order.getStart_lng());
             Address orderEnd = new Address(order.getEnd_lat(), order.getEnd_lng());
 
             if ( ( DistanceService.vectorCross(DistanceService.vector(orderStart,orderEnd),DistanceService.vector(memberReqDto.getStart(),memberReqDto.getEnd()))) &&
                     (DistanceService.orthogonalDistance(orderStart,memberReqDto.getStart(),memberReqDto.getEnd())<=0.5 &&
                      DistanceService.orthogonalDistance(orderEnd,memberReqDto.getStart(),memberReqDto.getEnd())<=0.5) &&
-                    (DistanceService.vectorCross(DistanceService.vector(memberReqDto.getStart(),orderStart),DistanceService.vector(memberReqDto.getStart(),memberReqDto.getEnd())))){
+                    (DistanceService.getDistance(orderStart.getLat(),orderStart.getLng(),memberReqDto.getStart().getLat(), memberReqDto.getStart().getLng())<0.1
+                            || DistanceService.vectorCross(DistanceService.vector(memberReqDto.getStart(),orderStart),DistanceService.vector(memberReqDto.getStart(),memberReqDto.getEnd())))){
                 orders.add(order);
             }
         }
@@ -146,6 +151,8 @@ public class OrderService {
                 orderReqDto.getEndTime().getHour()+":"+orderReqDto.getEndTime().getMinute(),
                 orderReqDto.getStart(),
                 orderReqDto.getEnd(),
+                orderReqDto.getStart_detail(),
+                orderReqDto.getEnd_detail(),
                 orderReqDto.getLuggageImgUrl(),
                 LuggageStatus.REGISTER
         );
@@ -239,6 +246,8 @@ public class OrderService {
         order.update(
                 orderReqDto.getStart(),
                 orderReqDto.getEnd(),
+                orderReqDto.getStart_detail(),
+                orderReqDto.getEnd_detail(),
                 orderReqDto.getStartTime().getHour()+":"+orderReqDto.getStartTime().getMinute(),
                 orderReqDto.getEndTime().getHour()+":"+orderReqDto.getEndTime().getMinute(),
                 orderReqDto.getLuggageImgUrl()
